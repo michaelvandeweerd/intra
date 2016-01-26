@@ -1,0 +1,13 @@
+<nav>
+	<ul>
+		<li>%string(/kort/kort.strings, nav-1)%</li>
+		<li>%string(/kort/kort.strings, nav-2)%</li>
+	</ul>
+</nav>
+<aside>
+	<ul>
+		<li><small>%string(/kort/kort.strings, asd-1)%</small></li>
+		<li><small>%string(/kort/kort.strings, asd-2)%</small></li>
+		<li><small>%string(/kort/kort.strings, asd-3)%</small></li>
+	</ul>
+</aside>

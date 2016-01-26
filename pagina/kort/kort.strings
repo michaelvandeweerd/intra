@@ -1,0 +1,64 @@
+description {
+	nl: "Laten we het kort houden."
+	.*: "Let's keep it short."
+}
+
+h1-1 {
+	.*: "parcif.al"
+}
+
+h2-1 {
+	nl: "Over **parcif.al**"
+	.*: "About **parcif.al**"
+}
+
+par-1 {
+	nl: "**parcif.al** is een simpele URL-verkortings dienst, aangeboden door [**Parcifal** Programmatuur](http://parcifal.eu). Het is beschikbaar voor publiek gebruik en gebaseerd op open-source technologie."
+	.*: "**parcif.al** is a simple URL-shortening service, provided by [**Parcifal** Programmatuur](http://parcifal.eu). It's available for public use and based on open-source technology."
+}
+
+h2-2 {
+	nl: "Genereer uw link"
+	.*: "Generate your link"
+}
+
+par-2 {
+	nl: "Vul het onderstaande formulier in om een verkorte link te genereren. Kort nadat u op &quot;%string(/global.strings, submit)%&quot; heeft geklikt zal u worden doorverwezen naar de meta-pagina van uw nieuwe korte link."
+	.*: "Fill in the form below to generate a short link. Shortly after clicking &quot;%string(/global.strings, submit)%&quot; you will be redirected to your new short link's meta page."
+}
+
+inp-ph-1 {
+	nl: "Vul het adres in waar uw korte link naar moet verwijzen ..."
+	.*: "Enter the address to which your short link should redirect ..."
+}
+
+lbl-1 {
+	nl: "Gebruik een aangepaste korte URL van 8 minuskels of een streepje."
+	.*: "Use a custom short URL of 8 miniscules or a dash."
+}
+
+inp-ph-2 {
+	nl: "Vul [a-z-]{8\} ..."
+	.*: "Enter [a-z-]{8\} ..."
+}
+
+nav-1 {
+	.*: "[Index](http://parcif.al)"
+}
+
+nav-2 {
+	.*: "[Meta](http://meta.parcif.al)"
+}
+
+asd-1 {
+	.*: "**Parcifal** Programmatuur &copy; %date(yyyy)%"
+}
+
+asd-2 {
+	nl: "Groningen, Nederland"
+	.*: "Groningen, the Netherlands"
+}
+
+asd-3 {
+	.*: "[HTML](https://validator.w3.org/nu/?doc=%url%&lang=%lang%), [CSS](https://jigsaw.w3.org/css-validator/validator?uri=%url%&lang=%lang%)"
+}
