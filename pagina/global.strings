@@ -1,9 +1,0 @@
-submit {
-	nl: "Versturen"
-	.*: "Submit"
-}
-
-warning-enable-javascript {
-	nl: "Deze pagina heeft Javascript nodig om goed te kunnen functioneren. Sta alstublieft het gebruik hiervan toe om gebruik te maken van alle onderdelen."
-	.*: "This page needs Javascript to function properly. Please enable it if you want to use all its features."
-}
