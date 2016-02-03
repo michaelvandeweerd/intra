@@ -11,21 +11,51 @@ import eu.parcifal.plus.logic.RouteNotFoundException;
 import eu.parcifal.plus.logic.Router;
 import eu.parcifal.plus.net.Exchanger;
 
+/**
+ * Responds to incoming HTTP request.
+ * 
+ * @author Michaël van de Weerd
+ */
 public class HTTPExchanger extends Exchanger {
+	/**
+	 * The value of the server HTTP header in the response.
+	 */
+	private final static String SERVER_SIGNATURE = "parcifal-intra";
 
-	private final static String SERVER_SIGNATURE = "phv";
-
+	/**
+	 * The default encoding of the HTTP response.
+	 */
 	public final static String DEFAULT_ENCODING = "ISO-8859-1";
 
+	/**
+	 * The router used containing available hosts.
+	 */
 	private Router router;
 
+	/**
+	 * The encoding of the HTTP response.
+	 */
 	private String encoding;
 
+	/**
+	 * Construct a new HTTP exchange.
+	 * 
+	 * @param router
+	 *            The router containing available hosts.
+	 * @param encoding
+	 *            The encoding of the HTTP response.
+	 */
 	public HTTPExchanger(Router router, String encoding) {
 		this.router = router;
 		this.encoding = encoding;
 	}
 
+	/**
+	 * Construct a new HTTP exchange using the default encoding.
+	 * 
+	 * @param router
+	 *            The router containing available hosts.
+	 */
 	public HTTPExchanger(Router router) {
 		this(router, DEFAULT_ENCODING);
 	}
@@ -84,14 +114,35 @@ public class HTTPExchanger extends Exchanger {
 		return httpResponse.toString().getBytes();
 	}
 
+	/**
+	 * Implementation of the HTTP OPTIONS method.
+	 * 
+	 * @param httpRequest
+	 *            The incoming HTTP request.
+	 * @return The HTTP response.
+	 */
 	private HTTPResponse options(HTTPRequest httpRequest) {
 		throw new MethodNotImplementedException();
 	}
 
+	/**
+	 * Implementation of the HTTP GET method.
+	 * 
+	 * @param httpRequest
+	 *            The incoming HTTP request.
+	 * @return The HTTP response.
+	 */
 	private HTTPResponse get(HTTPRequest httpRequest) {
 		return (HTTPResponse) this.router.route(httpRequest.messageHeader("Host").fieldValue(), httpRequest);
 	}
 
+	/**
+	 * Implementation of the HTTP HEAD method.
+	 * 
+	 * @param httpRequest
+	 *            The incoming HTTP request.
+	 * @return The HTTP response.
+	 */
 	private HTTPResponse head(HTTPRequest httpRequest) {
 		HTTPResponse httpResponse = (HTTPResponse) this.router.route(httpRequest.messageHeader("Host").fieldValue(),
 				httpRequest);
@@ -101,22 +152,57 @@ public class HTTPExchanger extends Exchanger {
 		return httpResponse;
 	}
 
+	/**
+	 * Implementation of the HTTP POST method.
+	 * 
+	 * @param httpRequest
+	 *            The incoming HTTP request.
+	 * @return The HTTP response.
+	 */
 	private HTTPResponse post(HTTPRequest httpRequest) {
 		return (HTTPResponse) this.router.route(httpRequest.messageHeader("Host").fieldValue(), httpRequest);
 	}
 
+	/**
+	 * Implementation of the HTTP PUT method.
+	 * 
+	 * @param httpRequest
+	 *            The incoming HTTP request.
+	 * @return The HTTP response.
+	 */
 	private HTTPResponse put(HTTPRequest httpRequest) {
 		throw new MethodNotImplementedException();
 	}
 
+	/**
+	 * Implementation of the HTTP DELETE method.
+	 * 
+	 * @param httpRequest
+	 *            The incoming HTTP request.
+	 * @return The HTTP response.
+	 */
 	private HTTPResponse delete(HTTPRequest httpRequest) {
 		throw new MethodNotImplementedException();
 	}
 
+	/**
+	 * Implementation of the HTTP TRACE method.
+	 * 
+	 * @param httpRequest
+	 *            The incoming HTTP request.
+	 * @return The HTTP response.
+	 */
 	private HTTPResponse trace(HTTPRequest httpRequest) {
 		throw new MethodNotImplementedException();
 	}
 
+	/**
+	 * Implementation of the HTTP CONNECT method.
+	 * 
+	 * @param httpRequest
+	 *            The incoming HTTP request.
+	 * @return The HTTP response.
+	 */
 	private HTTPResponse connect(HTTPRequest httpRequest) {
 		throw new MethodNotImplementedException();
 	}
