@@ -38,10 +38,6 @@ public abstract class HTTPMessage {
 		this.messageBody = messageBody;
 	}
 
-	protected HTTPStartLine getStartLine() {
-		return this.startLine;
-	}
-
 	public Collection<HTTPMessageHeader> getMessageHeaders() {
 		return this.messageHeaders;
 	}

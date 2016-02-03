@@ -21,19 +21,19 @@ public abstract class Context implements Executable {
 		} else {
 			this.request = (HTTPRequest) args[0];
 
-			return new HTTPResponse(this.getStatusLine(), this.getMessageHeaders(), this.getMessageBody());
+			return new HTTPResponse(this.statusLine(), this.messageHeaders(), this.messageBody());
 		}
 	}
 
-	protected HTTPStatusLine getStatusLine() {
+	protected HTTPStatusLine statusLine() {
 		return HTTPStatusLine.STATUS_200_1_1;
 	}
 
-	protected Collection<HTTPMessageHeader> getMessageHeaders() {
+	protected Collection<HTTPMessageHeader> messageHeaders() {
 		return new ArrayList<HTTPMessageHeader>();
 	}
 
-	protected HTTPMessageBody getMessageBody() {
+	protected HTTPMessageBody messageBody() {
 		return HTTPMessageBody.EMPTY;
 	}
 

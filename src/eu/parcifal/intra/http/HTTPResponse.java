@@ -32,6 +32,11 @@ public class HTTPResponse extends HTTPMessage {
 		this.messageHeader(new HTTPMessageHeader(fieldName, contentValue));
 	}
 
+	public void messageBody(HTTPMessageBody messageBody) {
+		this.messageBody = messageBody;
+		this.messageHeader("Content-Length", String.valueOf(this.messageBody.size()));
+	}
+
 	/**
 	 * Set the content body of the message body of the current HTTP response.
 	 * Also updates the value of the content length header.
@@ -40,8 +45,7 @@ public class HTTPResponse extends HTTPMessage {
 	 *            The new content body of the message body.
 	 */
 	public void messageBody(String contentBody) {
-		this.messageBody = new HTTPMessageBody(contentBody);
-		this.messageHeader("Content-Length", String.valueOf(this.messageBody.size()));
+		this.messageBody(new HTTPMessageBody(contentBody));
 	}
 
 }

@@ -17,7 +17,7 @@ import eu.parcifal.plus.parsing.MarkdownParser;
 import eu.parcifal.plus.parsing.Replacer;
 import eu.parcifal.plus.parsing.TranscriptionFile;
 
-public class PageContent extends Context {
+public class Page extends Context {
 
 	private static final String DEFAULT_CONTENT_TYPE = "text/html";
 
@@ -25,12 +25,12 @@ public class PageContent extends Context {
 
 	private String path;
 
-	public PageContent(String path) {
+	public Page(String path) {
 		this.path = path;
 	}
 
 	@Override
-	protected Collection<HTTPMessageHeader> getMessageHeaders() {
+	protected Collection<HTTPMessageHeader> messageHeaders() {
 		Collection<HTTPMessageHeader> messageHeaders = new ArrayList<HTTPMessageHeader>();
 
 		messageHeaders.add(new HTTPMessageHeader("Content-Type", DEFAULT_CONTENT_TYPE));
@@ -39,7 +39,7 @@ public class PageContent extends Context {
 	}
 
 	@Override
-	protected HTTPMessageBody getMessageBody() {
+	protected HTTPMessageBody messageBody() {
 		return new HTTPMessageBody(this.include(this.path));
 	}
 
@@ -67,12 +67,12 @@ public class PageContent extends Context {
 					new Method("include", 1) {
 						@Override
 						public String execute(String... args) {
-							return PageContent.this.include(args[0]);
+							return Page.this.include(args[0]);
 						}
 					}, new Method("string", 2) {
 						@Override
 						public String execute(String... args) {
-							return PageContent.this.string(args[0], args[1]);
+							return Page.this.string(args[0], args[1]);
 						}
 					}, new Method("date", 1) {
 						@Override
@@ -82,12 +82,12 @@ public class PageContent extends Context {
 					}, new Method("lang") {
 						@Override
 						public String execute(String... args) {
-							return PageContent.this.lang();
+							return Page.this.lang();
 						}
 					}, new Method("url") {
 						@Override
 						public String execute(String... args) {
-							return PageContent.this.uri();
+							return Page.this.uri();
 						}
 					});
 

@@ -15,6 +15,31 @@ public class HTTPRequest extends HTTPMessage {
 		return (HTTPRequestLine) this.startLine;
 	}
 
+	public HTTPMessageHeader messageHeader(String fieldName) {
+		for (HTTPMessageHeader messageHeader : this.messageHeaders) {
+			if (messageHeader.getFieldName().equals(fieldName)) {
+				return messageHeader;
+			}
+		}
+
+		throw new IllegalArgumentException();
+	}
+
+	public String post(String name) {
+		if (this.messageHeader("Content-Type").fieldValue().equals("x-www-form-urlencoded")) {
+			Pattern pattern = Pattern.compile(String.format("%1$s=([^&]*)", name));
+			Matcher matcher = pattern.matcher(this.messageBody.getContentBody());
+
+			if (matcher.find()) {
+				return matcher.group(1);
+			} else {
+				return null;
+			}
+		} else {
+			throw new RuntimeException();
+		}
+	}
+
 	public static HTTPRequest fromString(String raw) {
 		Pattern pattern = Pattern.compile("(.*)\r?\n((?:.*\r?\n)*)\r?\n(.*)?");
 		Matcher matcher = pattern.matcher(raw);
@@ -28,16 +53,6 @@ public class HTTPRequest extends HTTPMessage {
 		} else {
 			throw new RuntimeException();
 		}
-	}
-
-	public HTTPMessageHeader messageHeader(String fieldName) {
-		for (HTTPMessageHeader messageHeader : this.messageHeaders) {
-			if (messageHeader.getFieldName().equals(fieldName)) {
-				return messageHeader;
-			}
-		}
-
-		throw new IllegalArgumentException();
 	}
 
 }

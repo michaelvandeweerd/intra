@@ -8,6 +8,10 @@ import java.util.regex.Pattern;
 public class HTTPMessageHeader {
 
 	private final static String STRING_FORMAT = "%1$s: %2$s";
+	
+	public final static String FIELD_NAME_ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+	public final static String FIELD_NAME_SERVER = "Server";
+	public final static String FIELD_NAME_DATE = "Date";
 
 	private String fieldName;
 

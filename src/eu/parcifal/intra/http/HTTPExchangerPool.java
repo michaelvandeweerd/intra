@@ -19,14 +19,14 @@ public class HTTPExchangerPool extends Pool<Exchanger> {
 		if (!(args[0] instanceof Socket)) {
 			throw new IllegalArgumentException();
 		} else {
-			Exchanger responder = new HTTPExchanger(ROUTER);
+			Exchanger exchanger = new HTTPExchanger(ROUTER);
 
-			responder.observe(this);
-			responder.initialise((Socket) args[0]);
+			exchanger.observe(this);
+			exchanger.initialise((Socket) args[0]);
 
-			new Thread(responder).start();
+			new Thread(exchanger).start();
 
-			return responder;
+			return exchanger;
 		}
 	}
 

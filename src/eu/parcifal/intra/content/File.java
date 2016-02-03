@@ -1,7 +1,6 @@
 package eu.parcifal.intra.content;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,12 +11,12 @@ import java.util.regex.Pattern;
 import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPMessageHeader;
 
-public class FileContent extends Context {
+public class File extends Context {
 
 	private final static String FILE_ROOT = "./corpus/";
 
 	@Override
-	protected Collection<HTTPMessageHeader> getMessageHeaders() {
+	protected Collection<HTTPMessageHeader> messageHeaders() {
 		Collection<HTTPMessageHeader> messageHeaders = new ArrayList<HTTPMessageHeader>();
 
 		Pattern pattern = Pattern.compile("([^.]+)$");
@@ -60,8 +59,8 @@ public class FileContent extends Context {
 	}
 
 	@Override
-	protected HTTPMessageBody getMessageBody() {
-		File file = new File(FILE_ROOT + this.request.requestLine().requestURI().path());
+	protected HTTPMessageBody messageBody() {
+		java.io.File file = new java.io.File(FILE_ROOT + this.request.requestLine().requestURI().path());
 
 		if (file.exists()) {
 			try {
