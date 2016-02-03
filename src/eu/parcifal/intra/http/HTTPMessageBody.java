@@ -10,12 +10,8 @@ public class HTTPMessageBody {
 		this.contentBody = contentBody;
 	}
 
-	public String getContentBody() {
+	public String contentBody() {
 		return this.contentBody;
-	}
-	
-	public int size() {
-		return this.contentBody.getBytes().length;
 	}
 
 	@Override

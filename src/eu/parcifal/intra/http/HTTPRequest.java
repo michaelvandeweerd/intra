@@ -28,7 +28,7 @@ public class HTTPRequest extends HTTPMessage {
 	public String post(String name) {
 		if (this.messageHeader("Content-Type").fieldValue().equals("x-www-form-urlencoded")) {
 			Pattern pattern = Pattern.compile(String.format("%1$s=([^&]*)", name));
-			Matcher matcher = pattern.matcher(this.messageBody.getContentBody());
+			Matcher matcher = pattern.matcher(this.messageBody.contentBody());
 
 			if (matcher.find()) {
 				return matcher.group(1);

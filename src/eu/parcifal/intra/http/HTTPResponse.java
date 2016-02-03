@@ -9,7 +9,7 @@ public class HTTPResponse extends HTTPMessage {
 			HTTPMessageBody messageBody) {
 		super(statusLine, messageHeaders, messageBody);
 
-		this.messageHeader("Content-Length", String.valueOf(this.messageBody.size()));
+		this.messageHeader("Content-Length", String.valueOf(this.messageBody.contentBody().length()));
 	}
 
 	public HTTPResponse(HTTPStatusLine statusLine, Collection<HTTPMessageHeader> messageHeaders) {
@@ -34,7 +34,7 @@ public class HTTPResponse extends HTTPMessage {
 
 	public void messageBody(HTTPMessageBody messageBody) {
 		this.messageBody = messageBody;
-		this.messageHeader("Content-Length", String.valueOf(this.messageBody.size()));
+		this.messageHeader("Content-Length", String.valueOf(this.messageBody.contentBody().length()));
 	}
 
 	/**
