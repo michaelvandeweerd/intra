@@ -1,8 +1,9 @@
 package eu.parcifal.intra.content;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,8 @@ import eu.parcifal.plus.parsing.TranscriptionFile;
 
 public class PageContent extends Context {
 
+	private static final String DEFAULT_CONTENT_TYPE = "text/html";
+
 	private final static String PAGE_ROOT = "./pagina/";
 
 	private String path;
@@ -30,7 +33,7 @@ public class PageContent extends Context {
 	protected Collection<HTTPMessageHeader> getMessageHeaders() {
 		Collection<HTTPMessageHeader> messageHeaders = new ArrayList<HTTPMessageHeader>();
 
-		messageHeaders.add(new HTTPMessageHeader("Content-Type", "text/html"));
+		messageHeaders.add(new HTTPMessageHeader("Content-Type", DEFAULT_CONTENT_TYPE));
 
 		return messageHeaders;
 	}
@@ -45,34 +48,48 @@ public class PageContent extends Context {
 
 		if (pagina.exists()) {
 			try {
-				String content = new String(Files.readAllBytes(pagina.toPath()), "UTF-8");
+				BufferedReader reader = new BufferedReader(new FileReader(pagina));
 
-				Replacer replacer = new MethodReplacer(new Method("include", 1) {
-					@Override
-					public String execute(String... args) {
-						return PageContent.this.include(args[0]);
+				StringBuilder builder = new StringBuilder();
+				String line = null;
+
+				try {
+					while ((line = reader.readLine()) != null) {
+						builder.append(line + "\r\n");
 					}
-				}, new Method("string", 2) {
-					@Override
-					public String execute(String... args) {
-						return PageContent.this.string(args[0], args[1]);
-					}
-				}, new Method("date", 1) {
-					@Override
-					public String execute(String... args) {
-						return new SimpleDateFormat(args[0]).format(new Date());
-					}
-				}, new Method("lang") {
-					@Override
-					public String execute(String... args) {
-						return PageContent.this.lang();
-					}
-				}, new Method("url") {
-					@Override
-					public String execute(String... args) {
-						return PageContent.this.uri();
-					}
-				});
+				} finally {
+					reader.close();
+				}
+
+				String content = builder.toString();
+
+				Replacer replacer = new MethodReplacer(
+					new Method("include", 1) {
+						@Override
+						public String execute(String... args) {
+							return PageContent.this.include(args[0]);
+						}
+					}, new Method("string", 2) {
+						@Override
+						public String execute(String... args) {
+							return PageContent.this.string(args[0], args[1]);
+						}
+					}, new Method("date", 1) {
+						@Override
+						public String execute(String... args) {
+							return new SimpleDateFormat(args[0]).format(new Date());
+						}
+					}, new Method("lang") {
+						@Override
+						public String execute(String... args) {
+							return PageContent.this.lang();
+						}
+					}, new Method("url") {
+						@Override
+						public String execute(String... args) {
+							return PageContent.this.uri();
+						}
+					});
 
 				return replacer.replace(content);
 			} catch (IOException e) {

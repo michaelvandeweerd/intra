@@ -1,8 +1,9 @@
 package eu.parcifal.intra.content;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -39,8 +40,8 @@ public class FileContent extends Context {
 				} catch (NullPointerException | IndexOutOfBoundsException exception) {
 					quality = 1;
 				}
-				
-				if(matcher2.group(2).equals(subtype)) {
+
+				if (matcher2.group(2).equals(subtype)) {
 					accept = matcher2.group();
 					break;
 				} else if (quality <= acceptQuality) {
@@ -50,6 +51,7 @@ public class FileContent extends Context {
 			}
 
 			messageHeaders.add(new HTTPMessageHeader("Content-Type", accept));
+			messageHeaders.add(new HTTPMessageHeader("Access-Control-Allow-Origin", "*"));
 
 			return messageHeaders;
 		} else {
@@ -63,7 +65,20 @@ public class FileContent extends Context {
 
 		if (file.exists()) {
 			try {
-				return new HTTPMessageBody(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+
+				StringBuilder builder = new StringBuilder();
+				String line = null;
+
+				try {
+					while ((line = reader.readLine()) != null) {
+						builder.append(line + "\r\n");
+					}
+				} finally {
+					reader.close();
+				}
+
+				return new HTTPMessageBody(builder.toString());
 			} catch (IOException e) {
 				throw new RuntimeException();
 			}
