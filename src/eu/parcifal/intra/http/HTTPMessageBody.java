@@ -13,6 +13,10 @@ public class HTTPMessageBody {
 	public String getContentBody() {
 		return this.contentBody;
 	}
+	
+	public int size() {
+		return this.contentBody.getBytes().length;
+	}
 
 	@Override
 	public String toString() {

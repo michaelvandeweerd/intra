@@ -9,8 +9,7 @@ public class HTTPResponse extends HTTPMessage {
 			HTTPMessageBody messageBody) {
 		super(statusLine, messageHeaders, messageBody);
 
-		this.messageHeader(
-				new HTTPMessageHeader("Content-Length", String.valueOf(this.messageBody.getContentBody().length())));
+		this.messageHeader("Content-Length", String.valueOf(this.messageBody.size()));
 	}
 
 	public HTTPResponse(HTTPStatusLine statusLine, Collection<HTTPMessageHeader> messageHeaders) {
@@ -22,15 +21,27 @@ public class HTTPResponse extends HTTPMessage {
 	}
 
 	public void messageHeader(HTTPMessageHeader messageHeader) {
-		if(this.messageHeaders.contains(messageHeader)) {
+		if (this.messageHeaders.contains(messageHeader)) {
 			this.messageHeaders.remove(messageHeader);
 		}
-		
+
 		this.messageHeaders.add(messageHeader);
 	}
 
+	public void messageHeader(String fieldName, String contentValue) {
+		this.messageHeader(new HTTPMessageHeader(fieldName, contentValue));
+	}
+
+	/**
+	 * Set the content body of the message body of the current HTTP response.
+	 * Also updates the value of the content length header.
+	 * 
+	 * @param contentBody
+	 *            The new content body of the message body.
+	 */
 	public void messageBody(String contentBody) {
 		this.messageBody = new HTTPMessageBody(contentBody);
+		this.messageHeader("Content-Length", String.valueOf(this.messageBody.size()));
 	}
 
 }
