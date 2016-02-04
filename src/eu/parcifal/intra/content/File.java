@@ -1,7 +1,6 @@
 package eu.parcifal.intra.content;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,23 +62,24 @@ public class File extends Context {
 		java.io.File file = new java.io.File(FILE_ROOT + this.request.requestLine().requestURI().path());
 
 		if (file.exists()) {
+			FileInputStream stream = null;
+
 			try {
-				BufferedReader reader = new BufferedReader(new FileReader(file));
+				byte[] content = new byte[(int) file.length()];
 
-				StringBuilder builder = new StringBuilder();
-				String line = null;
+				stream = new FileInputStream(file);
 
-				try {
-					while ((line = reader.readLine()) != null) {
-						builder.append(line + "\r\n");
-					}
-				} finally {
-					reader.close();
-				}
+				stream.read(content);
 
-				return new HTTPMessageBody(builder.toString());
+				return new HTTPMessageBody(content);
 			} catch (IOException e) {
 				throw new RuntimeException();
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					throw new RuntimeException();
+				}
 			}
 		} else {
 			throw new IllegalArgumentException();

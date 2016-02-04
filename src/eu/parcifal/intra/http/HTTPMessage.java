@@ -1,7 +1,6 @@
 package eu.parcifal.intra.http;
 
 import java.util.Collection;
-import java.util.StringJoiner;
 
 /**
  * HTTP messages consist of requests from client to server and responses from
@@ -14,7 +13,7 @@ public abstract class HTTPMessage {
 	/**
 	 * The format of the string representation of an HTTP message.
 	 */
-	private final static String STRING_FORMAT = "%1$s\r\n%2$s\r\n\r\n%3$s";
+	private final static String STRING_FORMAT = "%1$s%2$s\r\n%3$s";
 
 	/**
 	 * The start-line of the current HTTP message.
@@ -46,15 +45,42 @@ public abstract class HTTPMessage {
 		return this.messageBody;
 	}
 
-	@Override
-	public String toString() {
-		StringJoiner joiner = new StringJoiner("\r\n");
+	public byte[] toBytes() {
+		byte[] startLine = this.startLine.toBytes();
+		byte[] messageHeaders = new byte[0];
+		byte[] emptyLine = "\r\n".getBytes();
+		byte[] messageBody = this.messageBody.toBytes();
 
-		for (HTTPMessageHeader messageHeader : this.messageHeaders) {
-			joiner.add(messageHeader.toString());
+		for (HTTPMessageHeader messsageHeader : this.messageHeaders) {
+			byte[] messageHeader = messsageHeader.toBytes();
+			byte[] concatination = new byte[messageHeaders.length + messageHeader.length];
+
+			System.arraycopy(messageHeaders, 0, concatination, 0, messageHeaders.length);
+			System.arraycopy(messageHeader, 0, concatination, messageHeaders.length, messageHeader.length);
+
+			messageHeaders = concatination;
 		}
 
-		return String.format(STRING_FORMAT, this.startLine, joiner, this.messageBody);
+		byte[] message = new byte[startLine.length + messageHeaders.length + emptyLine.length + messageBody.length];
+
+		System.arraycopy(startLine, 0, message, 0, startLine.length);
+		System.arraycopy(messageHeaders, 0, message, startLine.length, messageHeaders.length);
+		System.arraycopy(emptyLine, 0, message, startLine.length + messageHeaders.length, emptyLine.length);
+		System.arraycopy(messageBody, 0, message, startLine.length + messageHeaders.length + emptyLine.length,
+				messageBody.length);
+
+		return message;
+	}
+
+	@Override
+	public String toString() {
+		String messageHeaders = "";
+
+		for (HTTPMessageHeader messageHeader : this.messageHeaders) {
+			messageHeaders += messageHeader.toString();
+		}
+
+		return String.format(STRING_FORMAT, this.startLine, messageHeaders, this.messageBody);
 	}
 
 }

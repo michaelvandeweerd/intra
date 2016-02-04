@@ -11,5 +11,9 @@ public abstract class HTTPStartLine {
 	public HTTPVersion getVersion() {
 		return this.version;
 	}
+	
+	public byte[] toBytes() {
+		return this.toString().getBytes();
+	}
 
 }

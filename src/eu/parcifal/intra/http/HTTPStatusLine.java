@@ -2,7 +2,7 @@ package eu.parcifal.intra.http;
 
 public class HTTPStatusLine extends HTTPStartLine {
 
-	private final static String STRING_FORMAT = "%1$s %2$s %3$s";
+	private final static String STRING_FORMAT = "%1$s %2$s %3$s\r\n";
 
 	public final static HTTPStatusLine STATUS_100_1_1 = new HTTPStatusLine(100, "Continue", HTTPVersion.VERSION_1_1);
 	public final static HTTPStatusLine STATUS_101_1_1 = new HTTPStatusLine(100, "Switching Protocols",
@@ -90,7 +90,7 @@ public class HTTPStatusLine extends HTTPStartLine {
 	public String getReasonPhrase() {
 		return this.reasonPhrase;
 	}
-
+	
 	@Override
 	public String toString() {
 		return String.format(STRING_FORMAT, this.version, this.statusCode, this.reasonPhrase);

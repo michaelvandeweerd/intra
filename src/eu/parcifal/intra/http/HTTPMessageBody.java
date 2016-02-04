@@ -4,19 +4,27 @@ public class HTTPMessageBody {
 
 	public static final HTTPMessageBody EMPTY = new HTTPMessageBody("");
 
-	private String contentBody;
+	private byte[] contentBody;
 
-	public HTTPMessageBody(String contentBody) {
+	public HTTPMessageBody(byte[] contentBody) {
 		this.contentBody = contentBody;
 	}
 
-	public String contentBody() {
+	public HTTPMessageBody(String contentBody) {
+		this.contentBody = contentBody.getBytes();
+	}
+
+	public byte[] contentBody() {
+		return this.contentBody;
+	}
+
+	public byte[] toBytes() {
 		return this.contentBody;
 	}
 
 	@Override
 	public String toString() {
-		return this.contentBody;
+		return new String(this.contentBody);
 	}
 
 }
