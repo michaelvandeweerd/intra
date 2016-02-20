@@ -1,5 +1,8 @@
 package eu.parcifal.intra.content;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -9,6 +12,7 @@ import eu.parcifal.intra.http.HTTPRequest;
 import eu.parcifal.intra.http.HTTPResponse;
 import eu.parcifal.intra.http.HTTPStatusLine;
 import eu.parcifal.plus.logic.Executable;
+import eu.parcifal.plus.print.Console;
 
 public abstract class Context implements Executable {
 
@@ -35,6 +39,36 @@ public abstract class Context implements Executable {
 
 	protected HTTPMessageBody messageBody() {
 		return HTTPMessageBody.EMPTY;
+	}
+
+	protected byte[] load(String path) {
+		Console.log(path);
+		
+		File file = new File(path);
+
+		if (file.exists()) {
+			FileInputStream stream = null;
+
+			try {
+				byte[] content = new byte[(int) file.length()];
+
+				stream = new FileInputStream(file);
+
+				stream.read(content);
+
+				return content;
+			} catch (IOException e) {
+				throw new RuntimeException();
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					throw new RuntimeException();
+				}
+			}
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
 }

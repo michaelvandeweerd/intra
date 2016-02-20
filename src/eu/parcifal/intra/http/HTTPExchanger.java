@@ -96,6 +96,7 @@ public class HTTPExchanger extends Exchanger {
 		} catch (MethodNotImplementedException exception) {
 			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_405_1_1);
 		} catch (RouteNotFoundException | IllegalArgumentException exception) {
+			exception.printStackTrace();
 			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_404_1_1);
 		} catch (UnsupportedEncodingException exception) {
 			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_415_1_1);

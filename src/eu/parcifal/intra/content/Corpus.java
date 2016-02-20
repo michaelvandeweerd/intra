@@ -1,7 +1,5 @@
 package eu.parcifal.intra.content;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -9,10 +7,11 @@ import java.util.regex.Pattern;
 
 import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPMessageHeader;
+import eu.parcifal.plus.print.Console;
 
-public class File extends Context {
+public class Corpus extends Context {
 
-	private final static String FILE_ROOT = "./corpus/";
+	private final static String CORPUS_ROOT = "./corpus/";
 
 	@Override
 	protected Collection<HTTPMessageHeader> messageHeaders() {
@@ -59,31 +58,31 @@ public class File extends Context {
 
 	@Override
 	protected HTTPMessageBody messageBody() {
-		java.io.File file = new java.io.File(FILE_ROOT + this.request.requestLine().requestURI().path());
+		Pattern pattern = Pattern.compile("[/+]([^+]*)");
+		Matcher matcher = pattern.matcher(this.request.requestLine().requestURI().path());
 
-		if (file.exists()) {
-			FileInputStream stream = null;
+		Console.log(this.request.requestLine().requestURI().path());
+		
+		byte[] contentBody = new byte[0];
+		byte[] newLine = "\r\n".getBytes();
 
-			try {
-				byte[] content = new byte[(int) file.length()];
+		while (matcher.find()) {
+			byte[] file = this.load(CORPUS_ROOT + matcher.group(1));
 
-				stream = new FileInputStream(file);
+			if (contentBody.length == 0) {
+				contentBody = file;
+			} else {
+				byte[] content = new byte[contentBody.length + newLine.length + file.length];
 
-				stream.read(content);
+				System.arraycopy(contentBody, 0, content, 0, contentBody.length);
+				System.arraycopy(newLine, 0, content, contentBody.length, newLine.length);
+				System.arraycopy(file, 0, content, contentBody.length + newLine.length, file.length);
 
-				return new HTTPMessageBody(content);
-			} catch (IOException e) {
-				throw new RuntimeException();
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					throw new RuntimeException();
-				}
+				contentBody = content;
 			}
-		} else {
-			throw new IllegalArgumentException();
 		}
+
+		return new HTTPMessageBody(contentBody);
 	}
 
 }
