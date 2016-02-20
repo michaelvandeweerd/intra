@@ -12,7 +12,6 @@ import eu.parcifal.intra.http.HTTPRequest;
 import eu.parcifal.intra.http.HTTPResponse;
 import eu.parcifal.intra.http.HTTPStatusLine;
 import eu.parcifal.plus.logic.Executable;
-import eu.parcifal.plus.print.Console;
 
 public abstract class Context implements Executable {
 
@@ -41,9 +40,7 @@ public abstract class Context implements Executable {
 		return HTTPMessageBody.EMPTY;
 	}
 
-	protected byte[] load(String path) {
-		Console.log(path);
-		
+	protected byte[] load(String path) {		
 		File file = new File(path);
 
 		if (file.exists()) {

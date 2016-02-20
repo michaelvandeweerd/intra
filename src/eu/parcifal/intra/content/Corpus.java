@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPMessageHeader;
-import eu.parcifal.plus.print.Console;
 
 public class Corpus extends Context {
 
@@ -60,8 +59,6 @@ public class Corpus extends Context {
 	protected HTTPMessageBody messageBody() {
 		Pattern pattern = Pattern.compile("[/+]([^+]*)");
 		Matcher matcher = pattern.matcher(this.request.requestLine().requestURI().path());
-
-		Console.log(this.request.requestLine().requestURI().path());
 		
 		byte[] contentBody = new byte[0];
 		byte[] newLine = "\r\n\r\n".getBytes();
