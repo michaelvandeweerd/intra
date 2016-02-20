@@ -43,7 +43,7 @@ public abstract class Context implements Executable {
 	protected byte[] load(String path) {		
 		File file = new File(path);
 
-		if (file.exists()) {
+		if (file.exists() && file.isFile()) {
 			FileInputStream stream = null;
 
 			try {
