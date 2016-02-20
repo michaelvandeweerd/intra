@@ -64,7 +64,7 @@ public class Corpus extends Context {
 		Console.log(this.request.requestLine().requestURI().path());
 		
 		byte[] contentBody = new byte[0];
-		byte[] newLine = "\r\n".getBytes();
+		byte[] newLine = "\r\n\r\n".getBytes();
 
 		while (matcher.find()) {
 			byte[] file = this.load(CORPUS_ROOT + matcher.group(1));
