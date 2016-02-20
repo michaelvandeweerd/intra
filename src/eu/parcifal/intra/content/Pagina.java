@@ -13,7 +13,6 @@ import eu.parcifal.plus.net.URI;
 import eu.parcifal.plus.parsing.MarkdownReplacer;
 import eu.parcifal.plus.parsing.Replacer;
 import eu.parcifal.plus.parsing.TranscriptionFile;
-import eu.parcifal.plus.print.Console;
 
 public class Pagina extends Context {
 
@@ -89,8 +88,6 @@ public class Pagina extends Context {
 	}
 
 	private String method(String plain) {
-		Console.log(plain);
-		
 		Replacer replacer = new MethodReplacer(new Method("include", 1) {
 			@Override
 			public String execute(String... args) {
