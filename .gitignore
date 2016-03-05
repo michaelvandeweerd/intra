@@ -1,3 +1,6 @@
 /bin/
+/content/
+/status/
+intra.xml
 .classpath
 .project
