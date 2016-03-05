@@ -18,6 +18,7 @@ import eu.parcifal.intra.content.Content;
 import eu.parcifal.intra.content.Corpus;
 import eu.parcifal.intra.content.Pagina;
 import eu.parcifal.intra.content.Redirection;
+import eu.parcifal.intra.content.Script;
 import eu.parcifal.intra.http.HTTPListener;
 import eu.parcifal.plus.logic.Route;
 import eu.parcifal.plus.logic.Router;
@@ -122,14 +123,10 @@ public class Main {
 			return new Corpus(root + fileRoot + location);
 		}
 		case "script": {
-			// String scriptRoot =
-			// type.getAttributes().getNamedItem("root").getTextContent();
-			// String location =
-			// type.getAttributes().getNamedItem("location").getTextContent();
+			String scriptRoot = type.getAttributes().getNamedItem("root").getTextContent();
+			String location = type.getAttributes().getNamedItem("location").getTextContent();
 
-			// context = new Script(root + scriptRoot +
-			// location);
-			break;
+			return new Script(root + scriptRoot + location);
 		}
 		case "redirection": {
 			String target = type.getAttribute("target");
