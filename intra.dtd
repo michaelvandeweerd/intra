@@ -1,0 +1,29 @@
+<!ELEMENT intra (host)* >
+<!ATTLIST intra xmlns CDATA #FIXED "https://parcifal.eu/xml/intra" >
+
+<!ELEMENT host (context*,status*) >
+<!ATTLIST host name CDATA #REQUIRED >
+
+<!ELEMENT context (page|script|file|redirection) >
+<!ATTLIST context path CDATA #REQUIRED
+                  root CDATA "./content/" >
+                  
+<!ELEMENT status (page|script|file|redirection) >
+<!ATTLIST status code CDATA #REQUIRED
+                 root CDATA "./status/" >
+
+<!ELEMENT page EMPTY >
+<!ATTLIST page root CDATA "./page/"
+               location CDATA #REQUIRED >
+                 
+<!ELEMENT script EMPTY >
+<!ATTLIST script root CDATA "./script/"
+                 location CDATA #REQUIRED >
+
+<!ELEMENT file EMPTY >
+<!ATTLIST file root CDATA "./file/"
+               location CDATA #REQUIRED >
+
+<!ELEMENT redirection EMPTY >
+<!ATTLIST redirection target CDATA #REQUIRED
+                      temporary (true|false) "true" >
