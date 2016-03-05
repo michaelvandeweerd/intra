@@ -1,13 +1,11 @@
 package eu.parcifal.intra.http;
 
-import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 import eu.parcifal.plus.MethodNotImplementedException;
-import eu.parcifal.plus.logic.RouteNotFoundException;
 import eu.parcifal.plus.logic.Router;
 import eu.parcifal.plus.net.Exchanger;
 
@@ -30,7 +28,7 @@ public class HTTPExchanger extends Exchanger {
 	/**
 	 * The router used containing available hosts.
 	 */
-	private Router router;
+	private Router hosts;
 
 	/**
 	 * The encoding of the HTTP response.
@@ -40,13 +38,13 @@ public class HTTPExchanger extends Exchanger {
 	/**
 	 * Construct a new HTTP exchange.
 	 * 
-	 * @param router
+	 * @param hosts
 	 *            The router containing available hosts.
 	 * @param encoding
 	 *            The encoding of the HTTP response.
 	 */
-	public HTTPExchanger(Router router, String encoding) {
-		this.router = router;
+	public HTTPExchanger(Router hosts, String encoding) {
+		this.hosts = hosts;
 		this.encoding = encoding;
 	}
 
@@ -93,14 +91,10 @@ public class HTTPExchanger extends Exchanger {
 				httpResponse = this.connect(httpRequest);
 				break;
 			}
-		} catch (RouteNotFoundException | IllegalArgumentException exception) {
-			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_404_1_1);
-		} catch (MethodNotImplementedException exception) {
-			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_405_1_1);
-		} catch (UnsupportedEncodingException exception) {
-			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_415_1_1);
-		} catch (RuntimeException exception) {
+		} catch (Exception exception) {
 			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1);
+			
+			exception.printStackTrace();
 		}
 
 		DateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
@@ -132,7 +126,7 @@ public class HTTPExchanger extends Exchanger {
 	 * @return The HTTP response.
 	 */
 	private HTTPResponse get(HTTPRequest httpRequest) {
-		return (HTTPResponse) this.router.route(httpRequest.messageHeader("Host").fieldValue(), httpRequest);
+		return (HTTPResponse) this.hosts.route(httpRequest.messageHeader("Host").fieldValue(), httpRequest);
 	}
 
 	/**
@@ -143,7 +137,7 @@ public class HTTPExchanger extends Exchanger {
 	 * @return The HTTP response.
 	 */
 	private HTTPResponse head(HTTPRequest httpRequest) {
-		HTTPResponse httpResponse = (HTTPResponse) this.router.route(httpRequest.messageHeader("Host").fieldValue(),
+		HTTPResponse httpResponse = (HTTPResponse) this.hosts.route(httpRequest.messageHeader("Host").fieldValue(),
 				httpRequest);
 
 		httpResponse.messageBody(HTTPMessageBody.EMPTY);
@@ -159,7 +153,7 @@ public class HTTPExchanger extends Exchanger {
 	 * @return The HTTP response.
 	 */
 	private HTTPResponse post(HTTPRequest httpRequest) {
-		return (HTTPResponse) this.router.route(httpRequest.messageHeader("Host").fieldValue(), httpRequest);
+		return (HTTPResponse) this.hosts.route(httpRequest.messageHeader("Host").fieldValue(), httpRequest);
 	}
 
 	/**

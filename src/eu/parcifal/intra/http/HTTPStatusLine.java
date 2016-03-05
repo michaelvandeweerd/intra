@@ -83,7 +83,7 @@ public class HTTPStatusLine extends HTTPStartLine {
 		this.reasonPhrase = reasonPhrase;
 	}
 
-	public int getStatusCode() {
+	public int statusCode() {
 		return this.statusCode;
 	}
 

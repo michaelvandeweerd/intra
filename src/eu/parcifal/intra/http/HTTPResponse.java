@@ -20,6 +20,14 @@ public class HTTPResponse extends HTTPMessage {
 		this(statusLine, new ArrayList<HTTPMessageHeader>());
 	}
 
+	public HTTPStatusLine statusLine() {
+		return (HTTPStatusLine) this.startLine;
+	}
+
+	public void statusLine(HTTPStatusLine statusLine) {
+		this.startLine = statusLine;		
+	}
+
 	public void messageHeader(HTTPMessageHeader messageHeader) {
 		if (this.messageHeaders.contains(messageHeader)) {
 			this.messageHeaders.remove(messageHeader);
