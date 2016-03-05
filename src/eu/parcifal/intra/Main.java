@@ -94,49 +94,38 @@ public class Main {
 
 	private static Content compileContent(Element content) {
 		String root = content.getAttribute("root");
-
-		Element type = null;
-
+		
 		if (content.getElementsByTagName("page").getLength() != 0) {
-			type = (Element) content.getElementsByTagName("page").item(0);
+			Element page = (Element) content.getElementsByTagName("page").item(0);
+
+			String pageRoot = page.getAttribute("root");
+			String location = page.getAttribute("location");
+
+			return new Pagina(root + pageRoot + location);
 		} else if (content.getElementsByTagName("file").getLength() != 0) {
-			type = (Element) content.getElementsByTagName("file").item(0);
+			Element file = (Element) content.getElementsByTagName("file").item(0);
+
+			String fileRoot = file.getAttribute("root");
+			String location = file.getAttribute("location");
+
+			return new Corpus(root + fileRoot + location);
 		} else if (content.getElementsByTagName("script").getLength() != 0) {
-			type = (Element) content.getElementsByTagName("script").item(0);
+			Element script = (Element) content.getElementsByTagName("script").item(0);
+
+			String scriptRoot = script.getAttributes().getNamedItem("root").getTextContent();
+			String location = script.getAttributes().getNamedItem("location").getTextContent();
+
+			return new Script(root + scriptRoot + location);
 		} else if (content.getElementsByTagName("redirection").getLength() != 0) {
-			type = (Element) content.getElementsByTagName("redirection").item(0);
+			Element redirection = (Element) content.getElementsByTagName("redirection").item(0);
+
+			String target = redirection.getAttribute("target");
+			boolean temporary = Boolean.getBoolean(redirection.getAttribute("temporary"));
+
+			return new Redirection(target, temporary);
 		} else {
 			throw new IllegalArgumentException();
 		}
-
-		switch (type.getTagName()) {
-		case "page": {
-			String pageRoot = type.getAttribute("root");
-			String location = type.getAttribute("location");
-
-			return new Pagina(root + pageRoot + location);
-		}
-		case "file": {
-			String fileRoot = type.getAttribute("root");
-			String location = type.getAttribute("location");
-
-			return new Corpus(root + fileRoot + location);
-		}
-		case "script": {
-			String scriptRoot = type.getAttributes().getNamedItem("root").getTextContent();
-			String location = type.getAttributes().getNamedItem("location").getTextContent();
-
-			return new Script(root + scriptRoot + location);
-		}
-		case "redirection": {
-			String target = type.getAttribute("target");
-			boolean temporary = Boolean.getBoolean(type.getAttribute("temporary"));
-
-			return new Redirection(target, temporary);
-		}
-		}
-
-		throw new IllegalArgumentException();
 	}
 
 }
