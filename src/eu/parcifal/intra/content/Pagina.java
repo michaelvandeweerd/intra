@@ -14,11 +14,9 @@ import eu.parcifal.plus.parsing.MarkdownReplacer;
 import eu.parcifal.plus.parsing.Replacer;
 import eu.parcifal.plus.parsing.TranscriptionFile;
 
-public class Pagina extends Context {
+public class Pagina extends Content {
 
 	private static final String DEFAULT_CONTENT_TYPE = "text/html";
-
-	private final static String PAGINA_ROOT = "./pagina/";
 
 	private String path;
 
@@ -41,7 +39,7 @@ public class Pagina extends Context {
 	}
 
 	private String include(String path) {
-		return this.method(new String(this.load(PAGINA_ROOT + path)));
+		return this.method(new String(this.load(path)));
 	}
 
 	private String uri() {
@@ -71,7 +69,7 @@ public class Pagina extends Context {
 
 	private String string(String source, String key) {
 		try {
-			TranscriptionFile file = new TranscriptionFile(PAGINA_ROOT + source);
+			TranscriptionFile file = new TranscriptionFile(source);
 
 			return this.markdown(this.method(file.get(key, this.lang()).text()));
 		} catch (Exception e) {
@@ -96,12 +94,12 @@ public class Pagina extends Context {
 		}, new Method("markdown", 1) {
 			@Override
 			public String execute(String... args) {
-				return Pagina.this.markdown(new String(Pagina.this.load(PAGINA_ROOT + args[0])));
+				return Pagina.this.markdown(new String(Pagina.this.load(args[0])));
 			}
 		}, new Method("method", 1) {
 			@Override
 			public String execute(String... args) {
-				return Pagina.this.method(new String(Pagina.this.load(PAGINA_ROOT + args[0])));
+				return Pagina.this.method(new String(Pagina.this.load(args[0])));
 			}
 		}, new Method("string", 2) {
 			@Override

@@ -7,21 +7,28 @@ import eu.parcifal.intra.http.HTTPMessageHeader;
 import eu.parcifal.intra.http.HTTPStatusLine;
 import eu.parcifal.plus.net.URI;
 
-public class Redirection extends Context {
+public class Redirection extends Content {
 
 	private URI location;
 
-	public Redirection(URI location) {
+	private boolean temporary;
+
+	public Redirection(URI location, boolean temporary) {
 		this.location = location;
+		this.temporary = temporary;
 	}
 
-	public Redirection(String location) {
-		this(URI.fromString(location));
+	public Redirection(String location, boolean temporary) {
+		this(URI.fromString(location), temporary);
 	}
 
 	@Override
 	protected HTTPStatusLine statusLine() {
-		return HTTPStatusLine.STATUS_303_1_1;
+		if (this.temporary) {
+			return HTTPStatusLine.STATUS_307_1_1;
+		} else {
+			return HTTPStatusLine.STATUS_301_1_1;
+		}
 	}
 
 	@Override

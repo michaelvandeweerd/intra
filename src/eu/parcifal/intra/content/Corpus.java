@@ -8,16 +8,20 @@ import java.util.regex.Pattern;
 import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPMessageHeader;
 
-public class Corpus extends Context {
-
-	private final static String CORPUS_ROOT = "./corpus/";
+public class Corpus extends Content {
+	
+	private String location;
+	
+	public Corpus(String location) {
+		this.location = location;
+	}
 
 	@Override
 	protected Collection<HTTPMessageHeader> messageHeaders() {
 		Collection<HTTPMessageHeader> messageHeaders = new ArrayList<HTTPMessageHeader>();
 
 		Pattern pattern = Pattern.compile("([^.]+)$");
-		Matcher matcher = pattern.matcher(this.request.requestLine().requestURI().path());
+		Matcher matcher = pattern.matcher(this.location);
 
 		if (matcher.find()) {
 			String subtype = matcher.group(1);
@@ -59,12 +63,12 @@ public class Corpus extends Context {
 	protected HTTPMessageBody messageBody() {
 		Pattern pattern = Pattern.compile("[/+]([^+]*)");
 		Matcher matcher = pattern.matcher(this.request.requestLine().requestURI().path());
-		
+
 		byte[] contentBody = new byte[0];
 		byte[] newLine = "\r\n\r\n".getBytes();
 
 		while (matcher.find()) {
-			byte[] file = this.load(CORPUS_ROOT + matcher.group(1));
+			byte[] file = this.load(matcher.group(1));
 
 			if (contentBody.length == 0) {
 				contentBody = file;
