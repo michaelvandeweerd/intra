@@ -13,14 +13,14 @@ import eu.parcifal.intra.http.HTTPResponse;
 import eu.parcifal.intra.http.HTTPStatusLine;
 import eu.parcifal.plus.logic.Executable;
 
-public abstract class Context implements Executable {
+public abstract class Content implements Executable {
 
 	protected HTTPRequest request;
 
 	@Override
 	public HTTPResponse execute(Object... args) {
 		if (args.length < 1 || !(args[0] instanceof HTTPRequest)) {
-			return new HTTPResponse(HTTPStatusLine.STATUS_500_1_1);
+			throw new IllegalArgumentException();
 		} else {
 			this.request = (HTTPRequest) args[0];
 
@@ -40,7 +40,7 @@ public abstract class Context implements Executable {
 		return HTTPMessageBody.EMPTY;
 	}
 
-	protected byte[] load(String path) {		
+	protected byte[] load(String path) {
 		File file = new File(path);
 
 		if (file.exists() && file.isFile()) {
