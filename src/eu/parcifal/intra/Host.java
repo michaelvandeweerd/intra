@@ -1,5 +1,6 @@
 package eu.parcifal.intra;
 
+import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPRequest;
 import eu.parcifal.intra.http.HTTPResponse;
 import eu.parcifal.intra.http.HTTPStatusLine;
@@ -40,11 +41,17 @@ public class Host implements Executable {
 			try {
 				response = (HTTPResponse) this.content.route(request.requestLine().requestURI().path(), request);
 			} catch (RouteNotFoundException | IllegalArgumentException exception) {
-				response = new HTTPResponse(HTTPStatusLine.STATUS_404_1_1);
+				exception.printStackTrace();
+				response = new HTTPResponse(HTTPStatusLine.STATUS_404_1_1,
+						new HTTPMessageBody(HTTPStatusLine.STATUS_404_1_1));
 			} catch (MethodNotImplementedException exception) {
-				response = new HTTPResponse(HTTPStatusLine.STATUS_405_1_1);
+				exception.printStackTrace();
+				response = new HTTPResponse(HTTPStatusLine.STATUS_405_1_1,
+						new HTTPMessageBody(HTTPStatusLine.STATUS_405_1_1));
 			} catch (RuntimeException exception) {
-				response = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1);
+				exception.printStackTrace();
+				response = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1,
+						new HTTPMessageBody(HTTPStatusLine.STATUS_500_1_1));
 			}
 
 			try {
@@ -53,7 +60,7 @@ public class Host implements Executable {
 				response = (HTTPResponse) this.status.route(String.valueOf(statusLine.statusCode()), request);
 				response.statusLine(statusLine);
 			} catch (RouteNotFoundException exception) {
-				// do nothing
+
 			}
 
 			return response;

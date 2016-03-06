@@ -3,8 +3,15 @@ package eu.parcifal.intra.content;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPMessageHeader;
@@ -40,6 +47,34 @@ public abstract class Content implements Executable {
 		return HTTPMessageBody.EMPTY;
 	}
 
+	protected byte[] run(String script) {
+		StringWriter writer = new StringWriter();
+
+		ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+
+		engine.getContext().setWriter(writer);
+		engine.put("Request", this.request.toMap());
+
+		try {
+			engine.eval(script);
+		} catch (ScriptException exception) {
+			throw new IllegalArgumentException();
+		}
+
+		// remove newline appended by Nashorn's print(arg) function, should be
+		// done better
+		Pattern pattern = Pattern.compile("\\r?\\n");
+		Matcher matcher = pattern.matcher(writer.toString());
+
+		StringBuffer buffer = new StringBuffer();
+
+		while (matcher.find()) {
+			matcher.appendReplacement(buffer, "");
+		}
+
+		return matcher.appendTail(buffer).toString().getBytes();
+	}
+
 	protected byte[] load(String path) {
 		File file = new File(path);
 
@@ -54,12 +89,12 @@ public abstract class Content implements Executable {
 				stream.read(content);
 
 				return content;
-			} catch (IOException e) {
+			} catch (IOException exception) {
 				throw new RuntimeException();
 			} finally {
 				try {
 					stream.close();
-				} catch (IOException e) {
+				} catch (IOException exception) {
 					throw new RuntimeException();
 				}
 			}

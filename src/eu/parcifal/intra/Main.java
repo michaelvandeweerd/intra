@@ -1,6 +1,5 @@
 package eu.parcifal.intra;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,8 +14,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import eu.parcifal.intra.content.Content;
-import eu.parcifal.intra.content.Corpus;
-import eu.parcifal.intra.content.Pagina;
+import eu.parcifal.intra.content.File;
+import eu.parcifal.intra.content.Page;
 import eu.parcifal.intra.content.Redirection;
 import eu.parcifal.intra.content.Script;
 import eu.parcifal.intra.http.HTTPListener;
@@ -25,7 +24,7 @@ import eu.parcifal.plus.logic.Router;
 
 public class Main {
 
-	private final static File CONFIGURATION_FILE = new File("./intra.xml");
+	private final static java.io.File CONFIGURATION_FILE = new java.io.File("./intra.xml");
 
 	public static void main(String[] args) {
 		try {
@@ -94,21 +93,21 @@ public class Main {
 
 	private static Content compileContent(Element content) {
 		String root = content.getAttribute("root");
-		
+
 		if (content.getElementsByTagName("page").getLength() != 0) {
 			Element page = (Element) content.getElementsByTagName("page").item(0);
 
 			String pageRoot = page.getAttribute("root");
 			String location = page.getAttribute("location");
 
-			return new Pagina(root + pageRoot + location);
+			return new Page(root + pageRoot + location);
 		} else if (content.getElementsByTagName("file").getLength() != 0) {
 			Element file = (Element) content.getElementsByTagName("file").item(0);
 
 			String fileRoot = file.getAttribute("root");
 			String location = file.getAttribute("location");
 
-			return new Corpus(root + fileRoot + location);
+			return new File(root + fileRoot + location);
 		} else if (content.getElementsByTagName("script").getLength() != 0) {
 			Element script = (Element) content.getElementsByTagName("script").item(0);
 
