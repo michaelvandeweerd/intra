@@ -2,6 +2,7 @@ package eu.parcifal.intra.http;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 public class HTTPResponse extends HTTPMessage {
 
@@ -16,6 +17,10 @@ public class HTTPResponse extends HTTPMessage {
 		this(statusLine, messageHeaders, HTTPMessageBody.EMPTY);
 	}
 
+	public HTTPResponse(HTTPStatusLine statusLine, HTTPMessageBody messageBody) {
+		this(statusLine, new ArrayList<HTTPMessageHeader>(), messageBody);
+	}
+
 	public HTTPResponse(HTTPStatusLine statusLine) {
 		this(statusLine, new ArrayList<HTTPMessageHeader>());
 	}
@@ -25,7 +30,7 @@ public class HTTPResponse extends HTTPMessage {
 	}
 
 	public void statusLine(HTTPStatusLine statusLine) {
-		this.startLine = statusLine;		
+		this.startLine = statusLine;
 	}
 
 	public void messageHeader(HTTPMessageHeader messageHeader) {
@@ -54,6 +59,14 @@ public class HTTPResponse extends HTTPMessage {
 	 */
 	public void messageBody(String contentBody) {
 		this.messageBody(new HTTPMessageBody(contentBody));
+	}
+
+	public Map<String, Object> toMap() {
+		Map<String, Object> map = super.toMap();
+
+		map.put("statusLine", this.statusLine().toMap());
+
+		return map;
 	}
 
 }

@@ -1,5 +1,8 @@
 package eu.parcifal.intra.http;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HTTPStatusLine extends HTTPStartLine {
 
 	private final static String STRING_FORMAT = "%1$s %2$s %3$s\r\n";
@@ -90,7 +93,16 @@ public class HTTPStatusLine extends HTTPStartLine {
 	public String getReasonPhrase() {
 		return this.reasonPhrase;
 	}
-	
+
+	public Map<String, Object> toMap() {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("statusCode", this.statusCode);
+		map.put("reasonPhrase", this.reasonPhrase);
+
+		return map;
+	}
+
 	@Override
 	public String toString() {
 		return String.format(STRING_FORMAT, this.version, this.statusCode, this.reasonPhrase);

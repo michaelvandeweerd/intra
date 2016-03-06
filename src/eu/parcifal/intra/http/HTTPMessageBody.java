@@ -1,6 +1,11 @@
 package eu.parcifal.intra.http;
 
-public class HTTPMessageBody {
+import java.util.HashMap;
+import java.util.Map;
+
+import eu.parcifal.plus.data.Mappable;
+
+public class HTTPMessageBody implements Mappable {
 
 	public static final HTTPMessageBody EMPTY = new HTTPMessageBody("");
 
@@ -10,8 +15,8 @@ public class HTTPMessageBody {
 		this.contentBody = contentBody;
 	}
 
-	public HTTPMessageBody(String contentBody) {
-		this.contentBody = contentBody.getBytes();
+	public HTTPMessageBody(Object contentBody) {
+		this.contentBody = contentBody.toString().getBytes();
 	}
 
 	public byte[] contentBody() {
@@ -25,6 +30,14 @@ public class HTTPMessageBody {
 	@Override
 	public String toString() {
 		return new String(this.contentBody);
+	}
+
+	public Map<String, Object> toMap() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("contentBody", new String(this.contentBody));
+		
+		return map;
 	}
 
 }

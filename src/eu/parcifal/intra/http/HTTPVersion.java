@@ -1,9 +1,13 @@
 package eu.parcifal.intra.http;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HTTPVersion {
+import eu.parcifal.plus.data.Mappable;
+
+public class HTTPVersion implements Mappable {
 
 	private final static String STRING_FORMAT = "HTTP/%1$d.%2$d";
 
@@ -43,6 +47,15 @@ public class HTTPVersion {
 	@Override
 	public String toString() {
 		return String.format(STRING_FORMAT, this.major, this.minor);
+	}
+
+	public Map<String, Object> toMap() {
+		Map<String, Object> version = new HashMap<String, Object>();
+		
+		version.put("major", this.major);
+		version.put("minor", this.minor);
+		
+		return version;
 	}
 
 }

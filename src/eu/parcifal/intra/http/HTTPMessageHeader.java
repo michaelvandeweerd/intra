@@ -22,7 +22,7 @@ public class HTTPMessageHeader {
 		this.fieldValue = fieldValue;
 	}
 
-	public String getFieldName() {
+	public String fieldName() {
 		return this.fieldName;
 	}
 

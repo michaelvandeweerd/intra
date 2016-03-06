@@ -1,5 +1,7 @@
 package eu.parcifal.intra.http;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +43,16 @@ public class HTTPRequestLine extends HTTPStartLine {
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+	
+	public Map<String, Object> toMap() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("version", this.version);
+		map.put("method", this.method);
+		map.put("requestURI", this.requestURI.toMap());
+		
+		return map;
 	}
 
 	@Override
