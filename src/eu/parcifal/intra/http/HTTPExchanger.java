@@ -92,8 +92,9 @@ public class HTTPExchanger extends Exchanger {
 				break;
 			}
 		} catch (Exception exception) {
-			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1);
-			
+			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1,
+					new HTTPMessageBody(HTTPStatusLine.STATUS_500_1_1));
+
 			exception.printStackTrace();
 		}
 
