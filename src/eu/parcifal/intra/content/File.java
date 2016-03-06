@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
 import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPMessageHeader;
 
-public class Corpus extends Content {
+public class File extends Content {
 	
 	private String location;
 	
-	public Corpus(String location) {
+	public File(String location) {
 		this.location = location;
 	}
 
