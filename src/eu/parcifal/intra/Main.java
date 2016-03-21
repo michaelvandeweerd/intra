@@ -1,17 +1,13 @@
 package eu.parcifal.intra;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import eu.parcifal.intra.content.Content;
 import eu.parcifal.intra.content.File;
@@ -21,6 +17,7 @@ import eu.parcifal.intra.content.Script;
 import eu.parcifal.intra.http.HTTPListener;
 import eu.parcifal.plus.logic.Route;
 import eu.parcifal.plus.logic.Router;
+import eu.parcifal.plus.print.Console;
 
 public class Main {
 
@@ -40,27 +37,33 @@ public class Main {
 
 			document.normalize();
 
-			NodeList configuration = document.getElementsByTagName("host");
+			NodeList listeners = document.getElementsByTagName("listener");
 
-			Router hosts = Router.EMPTY;
+			for (int i = 0; i < listeners.getLength(); i++) {
+				Element listener = (Element) listeners.item(i);
 
-			for (int i = 0; i < configuration.getLength(); i++) {
-				Element host = (Element) configuration.item(i);
-				String name = host.getAttribute("name");
-
-				hosts.add(new Route(Main.compileHost(host), name));
+				new Thread(Main.compileListener(listener)).start();
 			}
-
-			new Thread(new HTTPListener(hosts)).start();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception exception) {
+			Console.warn(exception);
 		}
+	}
+
+	private static HTTPListener compileListener(Element listener) {
+		int port = Integer.parseInt(listener.getAttribute("port"));
+
+		NodeList hosts = listener.getElementsByTagName("host");
+
+		Router hostRouter = Router.EMPTY;
+
+		for (int i = 0; i < hosts.getLength(); i++) {
+			Element host = (Element) hosts.item(i);
+			String name = host.getAttribute("name");
+
+			hostRouter.add(new Route(Main.compileHost(host), name));
+		}
+
+		return new HTTPListener(port, hostRouter);
 	}
 
 	private static Host compileHost(Element host) {
