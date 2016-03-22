@@ -1,0 +1,20 @@
+<!-- 
+   - HTTP listener configuration file for the INTRA HTTP server by Parcifal 
+   - Programmatuur. 
+   - 
+   - @author	Michaël van de Weerd
+   - @since		22.03.2016
+   - @version	22.03.2016
+   -->
+<listener port="80">
+	<!-- localhost -->
+	<host name="localhost">
+		<context path="/">
+			<page location="./intra.ejs" />
+		</context>
+
+		<status code="(403|404|500)">
+			<page location="./%1$s.ejs" />
+		</status>
+	</host>
+</listener>

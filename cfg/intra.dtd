@@ -1,5 +1,18 @@
+<!--
+   - Definition of the configuration file for the INTRA HTTP server by Parcifal
+   - Programmatuur.
+   - 
+   - @author	Michaël van de Weerd
+   - @since		22.03.2016
+   - @version	22.03.2016
+   - @see		https://intra.parcifal.eu/intra.dtd
+   -->
+<!ELEMENT intra (exchangers) >
+
+<!ELEMENT exchangers (listener)* >
+
 <!ELEMENT listener (host)* >
-<!ATTLIST listener xmlns CDATA #FIXED "https://parcifal.eu/xml/intra"
+<!ATTLIST listener xmlns CDATA #FIXED "https://intra.parcifal.eu/xml"
                    port CDATA #REQUIRED
                    secure (true|false) "false" >
 
