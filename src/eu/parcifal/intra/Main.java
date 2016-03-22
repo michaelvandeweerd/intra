@@ -21,7 +21,7 @@ import eu.parcifal.plus.print.Console;
 
 public class Main {
 
-	private final static java.io.File CONFIGURATION_FILE = new java.io.File("./intra.xml");
+	private final static java.io.File CONFIGURATION_FILE = new java.io.File("./cfg/intra.xml");
 
 	public static void main(String[] args) {
 		try {
