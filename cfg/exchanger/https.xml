@@ -2,15 +2,15 @@
    - HTTP listener configuration file for the INTRA HTTP server by Parcifal 
    - Programmatuur. 
    - 
-   - @author   Michaël van de Weerd
-   - @since	   22.03.2016
-   - @version  22.03.2016
+   - @author    Michaël van de Weerd
+   - @since     22.03.2016
+   - @version   22.03.2016
    -->
 <listener port="433" secure="true">
-	<!-- localhost -->
-	<host name="localhost">
-		<context path=".*">
-			<page location="intra_secure.ejs" />
-		</context>
-	</host>
+    <!-- localhost -->
+    <host name="localhost">
+        <context path=".*">
+            <page location="intra_secure.ejs" />
+        </context>
+    </host>
 </listener>
