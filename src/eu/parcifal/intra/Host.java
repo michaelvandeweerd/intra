@@ -9,6 +9,7 @@ import eu.parcifal.plus.logic.Executable;
 import eu.parcifal.plus.logic.Route;
 import eu.parcifal.plus.logic.RouteNotFoundException;
 import eu.parcifal.plus.logic.Router;
+import eu.parcifal.plus.print.Console;
 
 public class Host implements Executable {
 
@@ -41,17 +42,20 @@ public class Host implements Executable {
 			try {
 				response = (HTTPResponse) this.content.route(request.requestLine().requestURI().path(), request);
 			} catch (RouteNotFoundException | IllegalArgumentException exception) {
-				exception.printStackTrace();
 				response = new HTTPResponse(HTTPStatusLine.STATUS_404_1_1,
 						new HTTPMessageBody(HTTPStatusLine.STATUS_404_1_1));
+				
+				Console.warn(exception);
 			} catch (MethodNotImplementedException exception) {
-				exception.printStackTrace();
 				response = new HTTPResponse(HTTPStatusLine.STATUS_405_1_1,
 						new HTTPMessageBody(HTTPStatusLine.STATUS_405_1_1));
+				
+				Console.warn(exception);
 			} catch (RuntimeException exception) {
-				exception.printStackTrace();
 				response = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1,
 						new HTTPMessageBody(HTTPStatusLine.STATUS_500_1_1));
+				
+				Console.warn(exception);
 			}
 
 			try {
