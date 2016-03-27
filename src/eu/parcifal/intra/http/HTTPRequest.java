@@ -1,7 +1,6 @@
 package eu.parcifal.intra.http;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,16 +51,8 @@ public class HTTPRequest extends HTTPMessage {
 
 			return new HTTPRequest(requestLine, messageHeaders, messageBody);
 		} else {
-			throw new RuntimeException();
+			throw new IllegalArgumentException("invalid HTTP-request");
 		}
-	}
-	
-	public Map<String, Object> toMap() {
-		Map<String, Object> map = super.toMap();
-		
-		map.put("requestLine", this.requestLine().toMap());
-		
-		return map;
 	}
 
 }

@@ -2,7 +2,8 @@ package eu.parcifal.intra.http;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HTTPResponse extends HTTPMessage {
 
@@ -61,12 +62,19 @@ public class HTTPResponse extends HTTPMessage {
 		this.messageBody(new HTTPMessageBody(contentBody));
 	}
 
-	public Map<String, Object> toMap() {
-		Map<String, Object> map = super.toMap();
+	public static HTTPResponse fromString(String raw) {
+		Pattern pattern = Pattern.compile("(.*)\r?\n((?:.*\r?\n)*)\r?\n(.*)?");
+		Matcher matcher = pattern.matcher(raw);
 
-		map.put("statusLine", this.statusLine().toMap());
+		if (matcher.find()) {
+			HTTPStatusLine statusLine = HTTPStatusLine.fromString(matcher.group(1));
+			Collection<HTTPMessageHeader> messageHeaders = HTTPMessageHeader.fromString(matcher.group(2));
+			HTTPMessageBody messageBody = new HTTPMessageBody(matcher.group(3));
 
-		return map;
+			return new HTTPResponse(statusLine, messageHeaders, messageBody);
+		} else {
+			throw new RuntimeException();
+		}
 	}
 
 }

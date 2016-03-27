@@ -1,10 +1,6 @@
 package eu.parcifal.intra.http;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import eu.parcifal.plus.data.Mappable;
 
 /**
  * HTTP messages consist of requests from client to server and responses from
@@ -13,7 +9,7 @@ import eu.parcifal.plus.data.Mappable;
  * @author Michaël van de Weerd
  * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#4.1
  */
-public abstract class HTTPMessage implements Mappable {
+public abstract class HTTPMessage {
 	/**
 	 * The format of the string representation of an HTTP message.
 	 */
@@ -72,21 +68,6 @@ public abstract class HTTPMessage implements Mappable {
 		System.arraycopy(emptyLine, 0, message, startLine.length + messageHeaders.length, emptyLine.length);
 		System.arraycopy(messageBody, 0, message, startLine.length + messageHeaders.length + emptyLine.length,
 				messageBody.length);
-
-		return message;
-	}
-
-	public Map<String, Object> toMap() {
-		Map<String, Object> message = new HashMap<String, Object>();
-		Map<String, Object> messageHeaders = new HashMap<String, Object>();
-
-		for (HTTPMessageHeader messageHeader : this.messageHeaders) {
-			messageHeaders.put(messageHeader.fieldName(), messageHeader.fieldValue());
-		}
-
-		message.put("startLine", this.startLine.toMap());
-		message.put("messageHeaders", messageHeaders);
-		message.put("messageBody", this.messageBody.toMap());
 
 		return message;
 	}

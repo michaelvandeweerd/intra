@@ -8,6 +8,7 @@ import java.util.TimeZone;
 import eu.parcifal.plus.MethodNotImplementedException;
 import eu.parcifal.plus.logic.Router;
 import eu.parcifal.plus.net.Exchanger;
+import eu.parcifal.plus.print.Console;
 
 /**
  * Responds to incoming HTTP request.
@@ -91,11 +92,15 @@ public class HTTPExchanger extends Exchanger {
 				httpResponse = this.connect(httpRequest);
 				break;
 			}
+		} catch (IllegalArgumentException exception) {
+			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_403_1_1);
+			
+			Console.warn(exception);
 		} catch (Exception exception) {
 			httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1,
 					new HTTPMessageBody(HTTPStatusLine.STATUS_500_1_1));
 
-			exception.printStackTrace();
+			Console.warn(exception);
 		}
 
 		DateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");

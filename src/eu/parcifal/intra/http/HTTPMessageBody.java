@@ -1,11 +1,6 @@
 package eu.parcifal.intra.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import eu.parcifal.plus.data.Mappable;
-
-public class HTTPMessageBody implements Mappable {
+public class HTTPMessageBody {
 
 	public static final HTTPMessageBody EMPTY = new HTTPMessageBody("");
 
@@ -30,14 +25,6 @@ public class HTTPMessageBody implements Mappable {
 	@Override
 	public String toString() {
 		return new String(this.contentBody);
-	}
-
-	public Map<String, Object> toMap() {
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		map.put("contentBody", new String(this.contentBody));
-		
-		return map;
 	}
 
 }

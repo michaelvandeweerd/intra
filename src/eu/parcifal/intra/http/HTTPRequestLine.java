@@ -1,7 +1,5 @@
 package eu.parcifal.intra.http;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +7,7 @@ import eu.parcifal.plus.net.URI;
 
 public class HTTPRequestLine extends HTTPStartLine {
 
-	private final static String STRING_FORMAT = "%1$s %2$s %3$s";
+	private final static String STRING_FORMAT = "%1$s %2$s %3$s\r\n";
 
 	private String method;
 
@@ -45,16 +43,6 @@ public class HTTPRequestLine extends HTTPStartLine {
 		}
 	}
 	
-	public Map<String, Object> toMap() {
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		map.put("version", this.version);
-		map.put("method", this.method);
-		map.put("requestURI", this.requestURI.toMap());
-		
-		return map;
-	}
-
 	@Override
 	public String toString() {
 		return String.format(STRING_FORMAT, this.method, this.requestURI, this.version);

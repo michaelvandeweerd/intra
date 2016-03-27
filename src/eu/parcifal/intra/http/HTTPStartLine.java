@@ -1,11 +1,6 @@
 package eu.parcifal.intra.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import eu.parcifal.plus.data.Mappable;
-
-public abstract class HTTPStartLine implements Mappable {
+public abstract class HTTPStartLine {
 
 	protected HTTPVersion version;
 
@@ -19,14 +14,6 @@ public abstract class HTTPStartLine implements Mappable {
 	
 	public byte[] toBytes() {
 		return this.toString().getBytes();
-	}
-
-	public Map<String, Object> toMap() {
-		Map<String, Object> startLine = new HashMap<String, Object>();
-		
-		startLine.put("version", this.version.toMap());
-		
-		return startLine;
 	}
 
 }
