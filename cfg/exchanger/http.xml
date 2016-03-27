@@ -6,15 +6,19 @@
    - @since		22.03.2016
    - @version	22.03.2016
    -->
-<listener port="80">
+<listener port="80" log="./%1$s-http.txt">
 	<!-- localhost -->
 	<host name="localhost">
 		<context path="/">
 			<page location="./intra.ejs" />
 		</context>
+		
+		<context path="/random[.](?:txt|xml|json|jsonp)">
+			<script location="./random.js" />
+		</context>
 
-		<status code="(403|404|500)">
+		<!--<status code="(403|404|500)">
 			<page location="./%1$s.ejs" />
-		</status>
+		</status>-->
 	</host>
 </listener>

@@ -4,7 +4,7 @@
    - 
    - @author	Michaël van de Weerd
    - @since		22.03.2016
-   - @version	22.03.2016
+   - @version	24.03.2016
    - @see		https://intra.parcifal.eu/intra.dtd
    -->
 <!ELEMENT intra (exchangers) >
@@ -12,7 +12,8 @@
 <!ELEMENT exchangers (listener)* >
 
 <!ELEMENT listener (host)* >
-<!ATTLIST listener xmlns CDATA #FIXED "https://intra.parcifal.eu/xml"
+<!ATTLIST listener xmlns CDATA #FIXED "https://schema.parcifal.eu/intra/22.03.2016"
+                   log CDATA "./%1$s-intra.txt"
                    port CDATA #REQUIRED
                    secure (true|false) "false" >
 
