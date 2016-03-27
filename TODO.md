@@ -1,0 +1,3 @@
+- [ ] Return a *304 Not Modified* HTTP-response if appropiate (check for a *If-Modified-Since* HTTP-message-header).
+- [ ] General database communications.
+- [ ] Module support.
