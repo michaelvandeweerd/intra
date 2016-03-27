@@ -1,5 +1,7 @@
 package eu.parcifal.intra.content;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -9,9 +11,9 @@ import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPMessageHeader;
 
 public class File extends Content {
-	
-	private String location;
-	
+
+	protected String location;
+
 	public File(String location) {
 		this.location = location;
 	}
@@ -68,7 +70,7 @@ public class File extends Content {
 		byte[] newLine = "\r\n\r\n".getBytes();
 
 		while (matcher.find()) {
-			byte[] file = this.load(matcher.group(1));
+			byte[] file = File.load(matcher.group(1));
 
 			if (contentBody.length == 0) {
 				contentBody = file;
@@ -84,6 +86,34 @@ public class File extends Content {
 		}
 
 		return new HTTPMessageBody(contentBody);
+	}
+	
+	public static byte[] load(String path) {
+		java.io.File file = new java.io.File(path);
+
+		if (file.exists() && file.isFile()) {
+			FileInputStream stream = null;
+
+			try {
+				byte[] content = new byte[(int) file.length()];
+
+				stream = new FileInputStream(file);
+
+				stream.read(content);
+
+				return content;
+			} catch (IOException exception) {
+				throw new RuntimeException();
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException exception) {
+					throw new RuntimeException();
+				}
+			}
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
 }
