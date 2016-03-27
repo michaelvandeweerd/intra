@@ -1,33 +1,35 @@
 package eu.parcifal.intra.http;
 
-import java.net.Socket;
-
 import eu.parcifal.plus.logic.Pool;
+import eu.parcifal.plus.logic.Poolable;
 import eu.parcifal.plus.logic.Router;
 import eu.parcifal.plus.net.Exchanger;
 
-public class HTTPExchangerPool extends Pool<Exchanger> {
+public class HTTPExchangerPool extends Pool {
 
-	private static Router ROUTER;
+    private Router router;
 
-	public HTTPExchangerPool(Router router) {
-		ROUTER = router;
-	}
+    private HTTPExchangerPool(Router router) {
+        super();
 
-	@Override
-	protected Exchanger instantiate(Object... args) {
-		if (!(args[0] instanceof Socket)) {
-			throw new IllegalArgumentException();
-		} else {
-			Exchanger exchanger = new HTTPExchanger(ROUTER);
+        this.router = router;
+    }
 
-			exchanger.observe(this);
-			exchanger.initialise((Socket) args[0]);
+    @Override
+    protected Poolable instantiate(Object... args) {
+        Exchanger exchanger = new HTTPExchanger(this.router);
 
-			new Thread(exchanger).start();
+        new Thread(exchanger).start();
 
-			return exchanger;
-		}
-	}
+        return exchanger;
+    }
+
+    public static HTTPExchangerPool instantiate(Router router) {
+        HTTPExchangerPool pool = new HTTPExchangerPool(router);
+
+        pool.initialise();
+
+        return pool;
+    }
 
 }

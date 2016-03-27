@@ -44,17 +44,17 @@ public class Host implements Executable {
 			} catch (RouteNotFoundException | IllegalArgumentException exception) {
 				response = new HTTPResponse(HTTPStatusLine.STATUS_404_1_1,
 						new HTTPMessageBody(HTTPStatusLine.STATUS_404_1_1));
-				
+
 				Console.warn(exception);
 			} catch (MethodNotImplementedException exception) {
 				response = new HTTPResponse(HTTPStatusLine.STATUS_405_1_1,
 						new HTTPMessageBody(HTTPStatusLine.STATUS_405_1_1));
-				
+
 				Console.warn(exception);
 			} catch (RuntimeException exception) {
 				response = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1,
 						new HTTPMessageBody(HTTPStatusLine.STATUS_500_1_1));
-				
+
 				Console.warn(exception);
 			}
 
@@ -64,7 +64,7 @@ public class Host implements Executable {
 				response = (HTTPResponse) this.status.route(String.valueOf(statusLine.statusCode()), request);
 				response.statusLine(statusLine);
 			} catch (RouteNotFoundException exception) {
-
+			    
 			}
 
 			return response;
