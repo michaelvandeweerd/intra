@@ -23,7 +23,7 @@ public class Host implements Executable {
 	}
 
 	public Host(Router content) {
-		this(content, Router.EMPTY);
+		this(content, new Router());
 	}
 
 	public Host(Route... routes) {

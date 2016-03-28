@@ -21,7 +21,7 @@ import eu.parcifal.plus.print.Console;
 
 public class Main {
 
-    private final static java.io.File CONFIGURATION_FILE = new java.io.File("./cfg/intra.xml");
+    private final static java.io.File CONFIGURATION_FILE = new java.io.File("./intra.xml");
 
     public static void main(String[] args) {
         try {
@@ -37,7 +37,7 @@ public class Main {
 
             document.normalize();
 
-            NodeList listeners = document.getElementsByTagName("listener");
+            NodeList listeners = document.getElementsByTagName("intra:listener");
 
             for (int i = 0; i < listeners.getLength(); i++) {
                 Element listener = (Element) listeners.item(i);
@@ -52,9 +52,9 @@ public class Main {
     private static HTTPListener compileListener(Element listener) {
         int port = Integer.parseInt(listener.getAttribute("port"));
 
-        NodeList hosts = listener.getElementsByTagName("host");
+        NodeList hosts = listener.getElementsByTagName("intra:host");
 
-        Router hostRouter = Router.EMPTY;
+        Router hostRouter = new Router();
 
         for (int i = 0; i < hosts.getLength(); i++) {
             Element host = (Element) hosts.item(i);
@@ -67,11 +67,11 @@ public class Main {
     }
 
     private static Host compileHost(Element host) {
-        NodeList contextList = host.getElementsByTagName("context");
-        NodeList statusList = host.getElementsByTagName("status");
+        NodeList contextList = host.getElementsByTagName("intra:context");
+        NodeList statusList = host.getElementsByTagName("intra:status");
 
-        Router contextRouter = Router.EMPTY;
-        Router statusRouter = Router.EMPTY;
+        Router contextRouter = new Router();
+        Router statusRouter = new Router();
 
         for (int i = 0; i < contextList.getLength(); i++) {
             if (contextList.item(i) != null) {
@@ -97,29 +97,29 @@ public class Main {
     private static Content compileContent(Element content) {
         String root = content.getAttribute("root");
 
-        if (content.getElementsByTagName("page").getLength() != 0) {
-            Element page = (Element) content.getElementsByTagName("page").item(0);
+        if (content.getElementsByTagName("intra:page").getLength() != 0) {
+            Element page = (Element) content.getElementsByTagName("intra:page").item(0);
 
             String pageRoot = page.getAttribute("root");
             String location = page.getAttribute("location");
 
             return new Page(root + pageRoot + location);
-        } else if (content.getElementsByTagName("file").getLength() != 0) {
-            Element file = (Element) content.getElementsByTagName("file").item(0);
+        } else if (content.getElementsByTagName("intra:file").getLength() != 0) {
+            Element file = (Element) content.getElementsByTagName("intra:file").item(0);
 
             String fileRoot = file.getAttribute("root");
             String location = file.getAttribute("location");
 
             return new File(root + fileRoot + location);
-        } else if (content.getElementsByTagName("script").getLength() != 0) {
-            Element script = (Element) content.getElementsByTagName("script").item(0);
+        } else if (content.getElementsByTagName("intra:script").getLength() != 0) {
+            Element script = (Element) content.getElementsByTagName("intra:script").item(0);
 
             String scriptRoot = script.getAttributes().getNamedItem("root").getTextContent();
             String location = script.getAttributes().getNamedItem("location").getTextContent();
 
             return new Script(root + scriptRoot + location);
-        } else if (content.getElementsByTagName("redirection").getLength() != 0) {
-            Element redirection = (Element) content.getElementsByTagName("redirection").item(0);
+        } else if (content.getElementsByTagName("intra:redirection").getLength() != 0) {
+            Element redirection = (Element) content.getElementsByTagName("intra:redirection").item(0);
 
             String target = redirection.getAttribute("target");
             boolean temporary = Boolean.getBoolean(redirection.getAttribute("temporary"));
