@@ -4,10 +4,10 @@
    - 
    - @author	Michaël van de Weerd
    - @since		22.03.2016
-   - @version	24.03.2016
+   - @version	27.03.2016
    - @see		https://intra.parcifal.eu/intra.dtd
    -->
-<!ELEMENT intra (exchangers) >
+<!ELEMENT server (exchangers) >
 
 <!ELEMENT exchangers (listener)* >
 
@@ -22,11 +22,11 @@
 
 <!ELEMENT context (page|script|file|redirection) >
 <!ATTLIST context path CDATA #REQUIRED
-                  root CDATA "./res/content/" >
+                  root CDATA "./content/" >
                   
 <!ELEMENT status (page|script|file|redirection) >
 <!ATTLIST status code CDATA #REQUIRED
-                 root CDATA "./res/status/" >
+                 root CDATA "./status/" >
 
 <!ELEMENT page EMPTY >
 <!ATTLIST page root CDATA "./page/"

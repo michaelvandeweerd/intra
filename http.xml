@@ -16,8 +16,13 @@
         <context path="/random[.](?:txt|xml|json|jsonp)">
             <script location="./random.js" />
         </context>
+        
+        <context root="./res/asset/image/" path="/favicon[.]ico">
+            <file root="./" location="./icon_1.ico" />
+        </context>
 
-        <!--<status code="(403|404|500)"> <page location="./%1$s.ejs" /> 
-            </status> -->
+        <status code="(403|404|500)">
+            <page location="./%1$s.ejs" /> 
+        </status>
     </host>
 </listener>
