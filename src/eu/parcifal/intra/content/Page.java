@@ -39,7 +39,7 @@ public class Page extends File {
 
             StringBuffer buffer = new StringBuffer();
 
-            Pattern pattern = Pattern.compile("<\\?js((?:(?!\\?>).)*)\\?>", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile("<\\?e?js((?:(?!\\?>).)*)\\?>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(plain);
 
             while (matcher.find()) {
