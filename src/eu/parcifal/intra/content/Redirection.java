@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import eu.parcifal.intra.http.HTTPMessageHeader;
+import eu.parcifal.intra.http.HTTPRequest;
 import eu.parcifal.intra.http.HTTPStatusLine;
 import eu.parcifal.plus.net.URI;
 
@@ -23,7 +24,7 @@ public class Redirection extends Content {
 	}
 
 	@Override
-	protected HTTPStatusLine statusLine() {
+	protected HTTPStatusLine getStatusLine(HTTPRequest request) {
 		if (this.temporary) {
 			return HTTPStatusLine.STATUS_307_1_1;
 		} else {
@@ -32,7 +33,7 @@ public class Redirection extends Content {
 	}
 
 	@Override
-	protected Collection<HTTPMessageHeader> messageHeaders() {
+	protected Collection<HTTPMessageHeader> getMessageHeaders(HTTPRequest request) {
 		Collection<HTTPMessageHeader> messageHeaders = new ArrayList<HTTPMessageHeader>();
 
 		messageHeaders.add(new HTTPMessageHeader("Location", this.location.toString()));

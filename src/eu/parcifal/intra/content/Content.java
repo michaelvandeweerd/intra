@@ -12,33 +12,36 @@ import eu.parcifal.plus.logic.Executable;
 
 public abstract class Content implements Executable {
 
-	protected HTTPRequest request;
+    @Override
+    public HTTPResponse execute(Object... args) {
+        if (args.length < 1 || !(args[0] instanceof HTTPRequest)) {
+            throw new IllegalArgumentException();
+        } else {
+            HTTPRequest request = (HTTPRequest) args[0];
 
-	@Override
-	public HTTPResponse execute(Object... args) {
-		if (args.length < 1 || !(args[0] instanceof HTTPRequest)) {
-			throw new IllegalArgumentException();
-		} else {
-			this.request = (HTTPRequest) args[0];
+            return this.getResponse(request);
+        }
+    }
 
-			return this.response();
-		}
-	}
+    protected HTTPResponse getResponse(HTTPRequest request) {
+        HTTPResponse response = new HTTPResponse(this.getStatusLine(request));
 
-	protected HTTPResponse response() {
-		return new HTTPResponse(this.statusLine(), this.messageHeaders(), this.messageBody());
-	}
+        response.setMessageHeaders(this.getMessageHeaders(request));
+        response.setMessageBody(this.getMessageBody(request));
 
-	protected HTTPStatusLine statusLine() {
-		return HTTPStatusLine.STATUS_200_1_1;
-	}
+        return response;
+    }
 
-	protected Collection<HTTPMessageHeader> messageHeaders() {
-		return new ArrayList<HTTPMessageHeader>();
-	}
+    protected HTTPStatusLine getStatusLine(HTTPRequest request) {
+        return HTTPStatusLine.STATUS_200_1_1;
+    }
 
-	protected HTTPMessageBody messageBody() {
-		return HTTPMessageBody.EMPTY;
-	}
+    protected Collection<HTTPMessageHeader> getMessageHeaders(HTTPRequest request) {
+        return new ArrayList<HTTPMessageHeader>();
+    }
+
+    protected HTTPMessageBody getMessageBody(HTTPRequest request) {
+        return new HTTPMessageBody();
+    }
 
 }

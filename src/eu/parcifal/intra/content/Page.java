@@ -1,64 +1,75 @@
 package eu.parcifal.intra.content;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import eu.parcifal.intra.http.HTTPMessageBody;
+import eu.parcifal.intra.http.HTTPRequest;
 import eu.parcifal.plus.print.Console;
 
 public class Page extends File {
+    
+    private ScriptEngine engine;
 
     public Page(String location) {
         super(location);
     }
 
     @Override
-    protected HTTPMessageBody messageBody() {
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+    protected HTTPMessageBody getMessageBody(HTTPRequest request) {
+        this.engine = new ScriptEngineManager().getEngineByName("nashorn");
 
-        // JavaScript strings cannot cover multiple lines
-        String request = this.request.toString().replace("\r\n", "\\n");
-
+        this.engine.getBindings(ScriptContext.GLOBAL_SCOPE).put("request", request);
+        this.engine.getBindings(ScriptContext.GLOBAL_SCOPE).put("page", this);
+        
         try {
-            // evaluate all default scripts
-            engine.eval(new FileReader("./res/asset/script/printer.js"));
-            engine.eval(new FileReader("./res/asset/script/plus.js"));
-            engine.eval(new FileReader("./res/asset/script/http.js"));
-            engine.eval(new FileReader("./res/asset/script/uri.js"));
-
-            // define global variables
-            engine.eval("var console = new Printer([Packages.eu.parcifal.plus.print.Console.log]);");
-            engine.eval("var intra = new Plus();");
-            engine.eval(String.format("var request = HTTPRequest.fromString(\"%1$s\");", request));
-
-            String plain = Page.read(this.location);
-
-            StringBuffer buffer = new StringBuffer();
-
-            Pattern pattern = Pattern.compile("<\\?e?js((?:(?!\\?>).)*)\\?>", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(plain);
-
-            while (matcher.find()) {
-                engine.eval(matcher.group(1));
-                matcher.appendReplacement(buffer, (String) engine.eval("intra.resetOutput()"));
-            }
-
-            String contentBody = matcher.appendTail(buffer).toString();
-
-            return new HTTPMessageBody(contentBody);
-        } catch (Exception exception) {
+            this.engine.eval(new FileReader("./res/asset/script/intra.js"));
+        } catch(ScriptException exception) {
             Console.warn(exception);
-
-            throw new RuntimeException();
+        } catch (FileNotFoundException exception) {
+            Console.warn(exception);
         }
+
+        String plain = this.read(this.location);
+
+        String contentBody = this.evaluate(plain);
+
+
+        return new HTTPMessageBody(contentBody);
+    }
+    
+    public String evaluate(String plain) {
+        Pattern pattern = Pattern.compile("<\\?e?js((?:(?!\\?>).)*)\\?>", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(plain);
+
+        StringBuffer buffer = new StringBuffer();
+        
+        while (matcher.find()) {            
+            try {
+                this.engine.eval(matcher.group(1));
+                
+                String result = (String) this.engine.eval("flushPrinter()");
+                
+                matcher.appendReplacement(buffer, this.evaluate(result));
+            } catch (ScriptException exception) {
+                Console.warn(exception);
+                
+                matcher.appendReplacement(buffer, String.format("<!-- %1$s -->", matcher.group(1)));
+            }
+        }
+        
+        return matcher.appendTail(buffer).toString();
     }
 
-    public static String read(String location) {
-        return new String(File.load(location));
+    public String read(String location) {
+        return new String(super.load(location));
     }
 
 }

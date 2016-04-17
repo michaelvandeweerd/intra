@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import eu.parcifal.intra.http.HTTPMessageBody;
 import eu.parcifal.intra.http.HTTPMessageHeader;
+import eu.parcifal.intra.http.HTTPRequest;
 
 public class File extends Content {
 
@@ -19,17 +20,17 @@ public class File extends Content {
     }
 
     @Override
-    protected Collection<HTTPMessageHeader> messageHeaders() {
+    protected Collection<HTTPMessageHeader> getMessageHeaders(HTTPRequest request) {
         Collection<HTTPMessageHeader> messageHeaders = new ArrayList<HTTPMessageHeader>();
 
         Pattern pattern = Pattern.compile("([^.]+)$");
-        Matcher matcher = pattern.matcher(this.location);
+        Matcher matcher = pattern.matcher(String.format(this.location, request.getRequestLine().getRequestURI().getPath()));
 
         if (matcher.find()) {
             String subtype = matcher.group(1);
 
             Pattern pattern2 = Pattern.compile("([^\\/, ]+\\/([^;, ]+))(?: *; *q=([^;, ]+))?");
-            Matcher matcher2 = pattern2.matcher(this.request.messageHeader("Accept").fieldValue());
+            Matcher matcher2 = pattern2.matcher(new String(request.getMessageHeader("Accept").getFieldValue()));
 
             String accept = "*/*";
             double acceptQuality = 1;
@@ -53,22 +54,23 @@ public class File extends Content {
             }
 
             messageHeaders.add(new HTTPMessageHeader("Content-Type", accept));
-            messageHeaders.add(new HTTPMessageHeader("Access-Control-Allow-Origin", "*"));
-
-            return messageHeaders;
         } else {
-            throw new IllegalArgumentException();
+            messageHeaders.add(new HTTPMessageHeader("Content-Type", "*/*"));
         }
+
+        messageHeaders.add(new HTTPMessageHeader("Access-Control-Allow-Origin", "*"));
+
+        return messageHeaders;
     }
 
     @Override
-    protected HTTPMessageBody messageBody() {
-        String location = String.format(this.location, this.request.requestLine().requestURI().path());
+    protected HTTPMessageBody getMessageBody(HTTPRequest request) {
+        String location = String.format(this.location, request.getRequestLine().getRequestURI().getPath());
 
-        return new HTTPMessageBody(File.load(location));
+        return new HTTPMessageBody(this.load(location));
     }
 
-    public static byte[] load(String location) {
+    public byte[] load(String location) {
         java.io.File file = new java.io.File(location);
 
         if (file.exists() && file.isFile()) {
@@ -92,7 +94,7 @@ public class File extends Content {
                 }
             }
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(String.format("file at location \"%1$s\" does not exist", location));
         }
     }
 

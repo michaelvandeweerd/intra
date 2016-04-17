@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import eu.parcifal.intra.http.HTTPMessageBody;
+import eu.parcifal.intra.http.HTTPRequest;
 
 public class MultiFile extends File {
 
@@ -12,15 +13,15 @@ public class MultiFile extends File {
     }
 
     @Override
-    protected HTTPMessageBody messageBody() {
+    protected HTTPMessageBody getMessageBody(HTTPRequest request) {
         Pattern pattern = Pattern.compile("[/+]([^+]*)");
-        Matcher matcher = pattern.matcher(this.request.requestLine().requestURI().path());
+        Matcher matcher = pattern.matcher(request.getRequestLine().getRequestURI().getPath());
 
         byte[] contentBody = new byte[0];
         byte[] newLine = "\r\n\r\n".getBytes();
 
         while (matcher.find()) {
-            byte[] file = File.load(this.location);
+            byte[] file = super.load(this.location);
 
             if (contentBody.length == 0) {
                 contentBody = file;
