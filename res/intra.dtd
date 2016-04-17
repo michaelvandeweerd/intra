@@ -18,7 +18,8 @@
                    secure (true|false) "false" >
 
 <!ELEMENT host (context*,status*) >
-<!ATTLIST host name CDATA #REQUIRED >
+<!ATTLIST host name CDATA #REQUIRED
+               root CDATA "./" >
 
 <!ELEMENT context (page|script|file|redirection) >
 <!ATTLIST context path CDATA #REQUIRED
@@ -29,15 +30,15 @@
                  root CDATA "./status/" >
 
 <!ELEMENT page EMPTY >
-<!ATTLIST page root CDATA "./page/"
+<!ATTLIST page root CDATA "./"
                location CDATA #REQUIRED >
                  
 <!ELEMENT script EMPTY >
-<!ATTLIST script root CDATA "./script/"
+<!ATTLIST script root CDATA "./"
                  location CDATA #REQUIRED >
 
 <!ELEMENT file EMPTY >
-<!ATTLIST file root CDATA "./file/"
+<!ATTLIST file root CDATA "./"
                location CDATA #REQUIRED >
 
 <!ELEMENT redirection EMPTY >
