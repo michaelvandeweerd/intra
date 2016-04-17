@@ -6,7 +6,7 @@ var Printer = Printer || (function() {
 	Printer.prototype = {
 		log : function(content, arguments) {
 			for(var i = 0; i < this.targets.length; i++) {
-				this.targets[i](intra.format(content, arguments));
+				this.targets[i](format(content, arguments));
 			}
 		}	
 	};
