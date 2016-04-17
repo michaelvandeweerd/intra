@@ -20,11 +20,11 @@ public class HTTPRequestLine extends HTTPStartLine {
 		this.requestURI = requestURI;
 	}
 
-	public String method() {
+	public String getMethod() {
 		return this.method;
 	}
 
-	public URI requestURI() {
+	public URI getRequestURI() {
 		return this.requestURI;
 	}
 

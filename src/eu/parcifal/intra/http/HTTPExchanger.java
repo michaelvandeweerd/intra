@@ -1,12 +1,10 @@
 package eu.parcifal.intra.http;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import eu.parcifal.plus.MethodNotImplementedException;
-import eu.parcifal.plus.logic.RouteNotFoundException;
 import eu.parcifal.plus.logic.Router;
 import eu.parcifal.plus.net.Exchanger;
 import eu.parcifal.plus.print.Console;
@@ -20,35 +18,13 @@ public class HTTPExchanger extends Exchanger {
     /**
      * The value of the server HTTP header in the response.
      */
+    @SuppressWarnings("unused")
     private final static String SERVER_SIGNATURE = "INTRA";
-
-    /**
-     * The default encoding of the HTTP response.
-     */
-    public final static String DEFAULT_ENCODING = "ISO-8859-1";
 
     /**
      * The router used containing available hosts.
      */
     private Router hosts;
-
-    /**
-     * The encoding of the HTTP response.
-     */
-    private String encoding;
-
-    /**
-     * Construct a new HTTP exchange.
-     * 
-     * @param hosts
-     *            The router containing available hosts.
-     * @param encoding
-     *            The encoding of the HTTP response.
-     */
-    public HTTPExchanger(Router hosts, String encoding) {
-        this.hosts = hosts;
-        this.encoding = encoding;
-    }
 
     /**
      * Construct a new HTTP exchange using the default encoding.
@@ -57,67 +33,81 @@ public class HTTPExchanger extends Exchanger {
      *            The router containing available hosts.
      */
     public HTTPExchanger(Router hosts) {
-        this(hosts, DEFAULT_ENCODING);
+        this.hosts = hosts;
     }
 
     @Override
-    protected byte[] response(byte[] request) {
-        HTTPResponse httpResponse = null;
+    protected void exchange(InputStream input, OutputStream output) throws IOException {
+        HTTPResponse response = null;
 
         try {
-            HTTPRequest httpRequest = HTTPRequest.fromString(new String(request, this.encoding));
+            HTTPRequestLine requestLine = HTTPRequestLine.fromString(new String(this.readLine(input)));
 
-            switch (httpRequest.requestLine().method()) {
+            HTTPRequest request = new HTTPRequest(requestLine);
+
+            byte[] line = null;
+
+            while ((line = this.readLine(input)).length > 2) {
+                request.addMessageHeader(HTTPMessageHeader.fromString(new String(line)));
+            }
+
+            if (request.hasMessageHeader("Content-Length")) {
+                int contentLength = Integer
+                        .valueOf(new String(request.getMessageHeader("Content-Length").getFieldValue()));
+
+                byte[] contentBody = new byte[contentLength];
+
+                input.read(contentBody, 0, contentLength);
+
+                request.setMessageBody(new HTTPMessageBody(contentBody));
+            }
+
+            switch (request.getRequestLine().getMethod()) {
             case "OPTIONS":
-                httpResponse = this.options(httpRequest);
+                response = this.options(request);
                 break;
             case "GET":
-                httpResponse = this.get(httpRequest);
+                response = this.get(request);
                 break;
             case "HEAD":
-                httpResponse = this.head(httpRequest);
+                response = this.head(request);
                 break;
             case "POST":
-                httpResponse = this.post(httpRequest);
+                response = this.post(request);
                 break;
             case "PUT":
-                httpResponse = this.put(httpRequest);
+                response = this.put(request);
                 break;
             case "DELETE":
-                httpResponse = this.delete(httpRequest);
+                response = this.delete(request);
                 break;
             case "TRACE":
-                httpResponse = this.trace(httpRequest);
+                response = this.trace(request);
                 break;
             case "CONNECT":
-                httpResponse = this.connect(httpRequest);
+                response = this.connect(request);
                 break;
             }
+
+            Console.debug(request);
         } catch (IllegalArgumentException exception) {
             Console.warn(exception);
 
-            httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_403_1_1,
-                    new HTTPMessageBody(HTTPStatusLine.STATUS_403_1_1.toString()));
-        } catch (RouteNotFoundException exception) {
-            Console.warn(exception);
-
-            httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_404_1_1,
-                    new HTTPMessageBody(HTTPStatusLine.STATUS_404_1_1.toString()));
+            response = new HTTPResponse(HTTPStatusLine.STATUS_400_1_1);
+            response.setMessageBody(HTTPStatusLine.STATUS_400_1_1);
         } catch (Exception exception) {
             Console.warn(exception);
 
-            httpResponse = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1,
-                    new HTTPMessageBody(HTTPStatusLine.STATUS_500_1_1));
+            response = new HTTPResponse(HTTPStatusLine.STATUS_500_1_1);
+            response.setMessageBody(HTTPStatusLine.STATUS_500_1_1);
         }
 
-        DateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+        // TODO set date
+        // TODO set server signature
+        
+        Console.debug(response);
 
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        httpResponse.messageHeader(HTTPMessageHeader.FIELD_NAME_SERVER, SERVER_SIGNATURE);
-        httpResponse.messageHeader(HTTPMessageHeader.FIELD_NAME_DATE, format.format(new Date()));
-
-        return httpResponse.toBytes();
+        output.write(response.toBytes());
     }
 
     /**
@@ -134,12 +124,12 @@ public class HTTPExchanger extends Exchanger {
     /**
      * Implementation of the HTTP GET method.
      * 
-     * @param httpRequest
+     * @param request
      *            The incoming HTTP request.
      * @return The HTTP response.
      */
-    private HTTPResponse get(HTTPRequest httpRequest) {
-        return (HTTPResponse) this.hosts.route(httpRequest.messageHeader("Host").fieldValue(), httpRequest);
+    private HTTPResponse get(HTTPRequest request) {
+        return (HTTPResponse) this.hosts.route(new String(request.getMessageHeader("Host").getFieldValue()), request);
     }
 
     /**
@@ -150,12 +140,15 @@ public class HTTPExchanger extends Exchanger {
      * @return The HTTP response.
      */
     private HTTPResponse head(HTTPRequest httpRequest) {
-        HTTPResponse httpResponse = (HTTPResponse) this.hosts.route(httpRequest.messageHeader("Host").fieldValue(),
-                httpRequest);
+        // HTTPResponse httpResponse = (HTTPResponse)
+        // this.hosts.route(httpRequest.getMessageHeader("Host").getFieldValue(),
+        // httpRequest);
 
-        httpResponse.messageBody(HTTPMessageBody.EMPTY);
+        // httpResponse.messageBody(HTTPMessageBody.EMPTY);
 
-        return httpResponse;
+        // return httpResponse;
+
+        return null;
     }
 
     /**
@@ -166,7 +159,11 @@ public class HTTPExchanger extends Exchanger {
      * @return The HTTP response.
      */
     private HTTPResponse post(HTTPRequest httpRequest) {
-        return (HTTPResponse) this.hosts.route(httpRequest.messageHeader("Host").fieldValue(), httpRequest);
+        // return (HTTPResponse)
+        // this.hosts.route(httpRequest.getMessageHeader("Host").getFieldValue(),
+        // httpRequest);
+
+        return null;
     }
 
     /**
@@ -211,6 +208,31 @@ public class HTTPExchanger extends Exchanger {
      */
     private HTTPResponse connect(HTTPRequest httpRequest) {
         throw new MethodNotImplementedException();
+    }
+
+    private byte[] readLine(InputStream stream) throws IOException {
+        byte newLine = '\n';
+        byte[] line = new byte[0];
+        int next;
+
+        try {
+            while ((next = stream.read()) >= 0) {
+                byte[] old = line;
+
+                line = new byte[old.length + 1];
+                line[old.length] = (byte) next;
+
+                System.arraycopy(old, 0, line, 0, old.length);
+
+                if (next == newLine) {
+                    break;
+                }
+            }
+        } catch (IOException exception) {
+            Console.warn(exception);
+        }
+
+        return line;
     }
 
 }

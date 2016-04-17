@@ -1,60 +1,176 @@
 package eu.parcifal.intra.http;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HTTPMessageHeader {
+    /**
+     * The field-name of the current HTTP-message-header.
+     */
+    private final byte[] fieldName;
 
-	private final static String STRING_FORMAT = "%1$s: %2$s\r\n";
+    /**
+     * The field-value of the current HTTP-message-header.
+     */
+    private byte[] fieldValue;
 
-	public final static String FIELD_NAME_ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
-	public final static String FIELD_NAME_SERVER = "Server";
-	public final static String FIELD_NAME_DATE = "Date";
+    /**
+     * Construct a new HTTP-message-header containing the specified field-name
+     * and field-value.
+     * 
+     * @param fieldName
+     *            The field-name of the new HTTP-message-header.
+     * @param fieldValue
+     *            The field-value of the new HTTP-message-header.
+     */
+    public HTTPMessageHeader(byte[] fieldName, byte[] fieldValue) {
+        this.fieldName = fieldName;
+        this.fieldValue = fieldValue;
+    }
 
-	private String fieldName;
+    /**
+     * Construct a new HTTP-message-header containing the specified field-name
+     * and field-value. Both fields will be stored as the byte array value of
+     * the result of it's toString() method.
+     * 
+     * @param fieldName
+     *            The field-name of the new HTTP-message-header.
+     * @param fieldValue
+     *            The field-value of the new HTTP-message-header.
+     */
+    public HTTPMessageHeader(Object fieldName, Object fieldValue) {
+        this(fieldName.toString().getBytes(), fieldValue.toString().getBytes());
+    }
 
-	private String fieldValue;
+    /**
+     * Construct a new HTTP-message-header containing the specified field-name.
+     * The field-value will be empty.
+     * 
+     * @param fieldName
+     *            The field-name of the new HTTP-message-header.
+     */
+    public HTTPMessageHeader(byte[] fieldName) {
+        this(fieldName, new byte[0]);
+    }
 
-	public HTTPMessageHeader(String fieldName, String fieldValue) {
-		this.fieldName = fieldName;
-		this.fieldValue = fieldValue;
-	}
+    /**
+     * Construct a new HTTP-message-header containing the specified field-name.
+     * The field-name will be stored as the byte array value of the result of
+     * it's toString() method. The field-value will be empty.
+     * 
+     * @param fieldName
+     *            The field-name of the new HTTP-message-header.
+     */
+    public HTTPMessageHeader(Object fieldName) {
+        this(fieldName.toString().getBytes());
+    }
 
-	public String fieldName() {
-		return this.fieldName;
-	}
+    /**
+     * Return the field-name of the current HTTP-message-header.
+     * 
+     * @return The field-name of the current HTTP-message-header.
+     */
+    public byte[] getFieldName() {
+        return this.fieldName;
+    }
 
-	public String fieldValue() {
-		return this.fieldValue;
-	}
+    /**
+     * Return the field-value of the current HTTP-message-header.
+     * 
+     * @return The field-value of the current HTTP-message-header.
+     */
+    public byte[] getFieldValue() {
+        return this.fieldValue;
+    }
 
-	public static Collection<HTTPMessageHeader> fromString(String raw) {
-		Collection<HTTPMessageHeader> messageHeaders = new ArrayList<HTTPMessageHeader>();
+    /**
+     * Set the field-value of the current HTTP-message-header.
+     * 
+     * @param fieldValue
+     *            The new field-value of the current HTTP-message-header.
+     */
+    public void setFieldValue(byte[] fieldValue) {
+        this.fieldValue = fieldValue;
+    }
 
-		Pattern pattern = Pattern.compile("^([^:]+):[\t ]*(.*)$", Pattern.MULTILINE);
-		Matcher matcher = pattern.matcher(raw);
+    /**
+     * Set the field-value of the current HTTP-message-header. The field-value
+     * will be stored as the byte array value of it's toString() method.
+     * 
+     * @param fieldValue
+     *            The new field-value of the current HTTP-message-header.
+     */
+    public void setFieldValue(Object fieldValue) {
+        this.fieldValue = fieldValue.toString().getBytes();
+    }
 
-		while (matcher.find()) {
-			messageHeaders.add(new HTTPMessageHeader(matcher.group(1), matcher.group(2)));
-		}
+    /**
+     * Return the current HTTP-message-header as a byte array in the
+     * configuration as defined by RFC 2616:
+     * 
+     * field-name ":" [field-value]
+     * 
+     * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html
+     * @return The current HTTP-message-header as a byte array.
+     */
+    public byte[] toBytes() {
+        byte colon = ':';
 
-		return messageHeaders;
-	}
+        byte[] fieldName = this.getFieldName();
+        byte[] fieldValue = this.getFieldValue();
 
-	public byte[] toBytes() {
-		return this.toString().getBytes();
-	}
+        byte[] messageHeader = new byte[fieldName.length + 1 + fieldValue.length];
 
-	@Override
-	public String toString() {
-		return String.format(STRING_FORMAT, this.fieldName, this.fieldValue);
-	}
+        messageHeader[fieldName.length] = colon;
 
-	@Override
-	public boolean equals(Object other) {
-		return other instanceof HTTPMessageHeader && ((HTTPMessageHeader) other).fieldValue().equals(this.fieldValue);
-	}
+        System.arraycopy(fieldName, 0, messageHeader, 0, fieldName.length);
+        System.arraycopy(fieldValue, 0, messageHeader, fieldName.length + 1, fieldValue.length);
+
+        return messageHeader;
+    }
+
+    /**
+     * Return the current HTTP-message-header as a string. Equal to new
+     * String(HTTPMessageHeader.toBytes()).
+     * 
+     * @return The current HTTP-message-header as a string.
+     */
+    @Override
+    public String toString() {
+        return new String(this.toBytes());
+    }
+
+    /**
+     * Return true if the specified object is an instance of the
+     * HTTPMessageHeader class and has a field-name equal to the field-name of
+     * the current HTTP-message-header, otherwise return false.
+     * 
+     * @return True if the specified object equals the current
+     *         HTTP-message-header, otherwise false.
+     */
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof HTTPMessageHeader
+                && ((HTTPMessageHeader) other).getFieldName().equals(this.getFieldName());
+    }
+
+    /**
+     * Return the HTTP-message-header represented in the specified string.
+     * 
+     * @param raw
+     *            The string representing the HTTP-message-header to return.
+     * @return The HTTP-message-header represented in the specified string.
+     */
+    public static HTTPMessageHeader fromString(String raw) {
+        Pattern pattern = Pattern.compile("^([^:]+):[\t ]*(.*)$");
+        Matcher matcher = pattern.matcher(raw);
+
+        if (matcher.find()) {
+            return new HTTPMessageHeader(matcher.group(1), matcher.group(2));
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("no HTTP-message-header represented in the specified string\"%1$s\"", raw));
+        }
+    }
 
 }

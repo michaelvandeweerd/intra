@@ -7,8 +7,8 @@ public class HTTPVersion {
 
 	private final static String STRING_FORMAT = "HTTP/%1$d.%2$d";
 
-	public final static HTTPVersion VERSION_1_0 = new HTTPVersion(1, 0);
-	public final static HTTPVersion VERSION_1_1 = new HTTPVersion(1, 1);
+//	public final static HTTPVersion VERSION_1_0 = new HTTPVersion(1, 0);
+//	public final static HTTPVersion VERSION_1_1 = new HTTPVersion(1, 1);
 
 	private int major;
 	private int minor;
